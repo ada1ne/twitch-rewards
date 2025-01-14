@@ -1,0 +1,87 @@
+"""Tests for the user controller"""
+
+import uuid
+
+import pytest
+from fastapi.testclient import TestClient
+
+from twitchrewards.main import app
+from twitchrewards.models import Pronouns, Title, User
+from twitchrewards.repository.database import get_db
+
+client = TestClient(app)
+
+
+@pytest.mark.parametrize(
+    "pronouns,expected_description",
+    [
+        (Pronouns.UNKNOWN, ""),
+        (Pronouns.HE, "ele/dele"),
+        (Pronouns.SHE, "ela/dela"),
+        (Pronouns.THEY, "elu/delu"),
+        (Pronouns.ALL, "todos pronomes"),
+    ],
+)
+def test_should_return_pronouns(pronouns: Pronouns, expected_description: str):
+    """Test if pronouns are returned correctly"""
+    user_name = str(uuid.uuid4())
+    given_user(user_name, pronouns)
+
+    response = client.get(f"/users/{user_name}")
+    assert response.status_code == 200
+
+    user = response.json()
+    assert user["pronouns"] == expected_description
+
+
+def test_when_user_does_not_exists_should_return_404():
+    """Test if pronouns are returned correctly"""
+    user_name = str(uuid.uuid4())
+
+    response = client.get(f"/users/{user_name}")
+
+    assert response.status_code == 404
+
+
+def test_when_user_does_not_have_title_should_return_name():
+    """Test if the display name is returned when user has no title set"""
+    user_name = str(uuid.uuid4())
+    given_user(user_name, title=Title.STREAMER)
+
+    response = client.get(f"/users/{user_name}")
+    assert response.status_code == 200
+
+    user = response.json()
+    assert user["display_name"] == user_name
+
+
+@pytest.mark.parametrize(
+    "pronouns",
+    [
+        Pronouns.UNKNOWN,
+        Pronouns.HE,
+        Pronouns.SHE,
+        Pronouns.THEY,
+        Pronouns.ALL,
+    ],
+)
+def test_when_user_has_streamer_title_should_return_name(pronouns: Pronouns):
+    """Test if pronouns are returned correctly"""
+    user_name = str(uuid.uuid4())
+    given_user(user_name, pronouns, title=Title.STREAMER)
+
+    response = client.get(f"/users/{user_name}")
+    assert response.status_code == 200
+
+    user = response.json()
+    assert user["display_name"] == f"Streamer {user_name}"
+
+
+def given_user(
+    name: str, pronouns: Pronouns = Pronouns.THEY, title: Title = Title.NONE
+):
+    """Insert a new user in the database."""
+    with get_db() as db:
+        user = User(name=name, pronouns=pronouns, title=title)
+        db.add(user)
+        db.commit()
