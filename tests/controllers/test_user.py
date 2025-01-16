@@ -2,11 +2,14 @@
 
 import uuid
 
+import jwt
 import pytest
 from fastapi.testclient import TestClient
 
+from twitchrewards.config import settings
 from twitchrewards.main import app
 from twitchrewards.models import Pronouns, Title, User
+from twitchrewards.repository import get_user_by_name
 from twitchrewards.repository.database import get_db
 
 client = TestClient(app)
@@ -46,7 +49,7 @@ def test_when_user_does_not_exists_should_return_404():
 def test_when_user_does_not_have_title_should_return_name():
     """Test if the display name is returned when user has no title set"""
     user_name = str(uuid.uuid4())
-    given_user(user_name, title=Title.STREAMER)
+    given_user(user_name)
 
     response = client.get(f"/users/{user_name}")
     assert response.status_code == 200
@@ -77,6 +80,23 @@ def test_when_user_has_streamer_title_should_return_name(pronouns: Pronouns):
     assert user["display_name"] == f"Streamer {user_name}"
 
 
+def test_when_updating_pronouns_and_jwt_token_is_valid_update_pronouns():
+    """Test if API returns 401 when token is invalid"""
+    user_name = str(uuid.uuid4())
+    given_user(user_name, Pronouns.UNKNOWN)
+    token = given_valid_token(user_name)
+
+    response = client.post(
+        f"/users/{user_name}/set-pronouns",
+        headers={"Authorization": f"Bearer {token}"},
+        json={"pronouns": 2},
+    )
+    assert response.status_code == 200
+
+    user = get_user_by_name(user_name)
+    assert user.pronouns == Pronouns.SHE
+
+
 def given_user(
     name: str, pronouns: Pronouns = Pronouns.THEY, title: Title = Title.NONE
 ):
@@ -85,3 +105,14 @@ def given_user(
         user = User(name=name, pronouns=pronouns, title=title)
         db.add(user)
         db.commit()
+
+
+def given_valid_token(twitch_name: str):
+    """Encodes a valid JWT token to authenticate in the application."""
+    return jwt.encode(
+        {
+            "twitch_name": twitch_name,
+        },
+        settings.JWT_ENCODING_KEY,
+        algorithm=settings.JWT_ENCODING_ALGORITHM,
+    )

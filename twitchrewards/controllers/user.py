@@ -1,11 +1,18 @@
 """Contains routes related to the user"""
 
-from fastapi import APIRouter, HTTPException, status
+from typing import Annotated
 
-from twitchrewards.controllers.view_models.titles import get_name_with_title
-from twitchrewards.controllers.view_models.user_view_model import UserViewModel
+from fastapi import APIRouter, HTTPException, status
+from fastapi.params import Depends
+
+from twitchrewards.authentication import get_current_user
+from twitchrewards.controllers.view_models import (
+    UpdatePronounsData,
+    UserViewModel,
+    get_name_with_title,
+)
 from twitchrewards.models import Pronouns, User
-from twitchrewards.repository import get_user_by_name
+from twitchrewards.repository import get_user_by_name, update_user
 
 router = APIRouter()
 
@@ -18,6 +25,22 @@ def fetch_user_metadata(user_name: str):
         raise HTTPException(status_code=404, detail="User not found")
 
     return parse(user)
+
+
+@router.post("/{user_name}/set-pronouns", status_code=status.HTTP_200_OK)
+def update_pronouns(
+    user_name: str,
+    pronouns: UpdatePronounsData,
+    user: Annotated[User, Depends(get_current_user)],
+):
+    """Updates the pronouns of a user to display in chat"""
+    if user_name != user.name:
+        raise HTTPException(
+            status_code=403, detail="Access token does not match target user"
+        )
+
+    user.pronouns = pronouns.pronouns
+    update_user(user)
 
 
 def parse_pronouns(pronoun: Pronouns) -> str:

@@ -42,7 +42,7 @@ def get_user_name(twitch_token: str) -> TwitchResponse:
             "Authorization": f"Bearer {twitch_token}",
             "Client-Id": settings.TWITCH_APP_CLIENT_ID,
         },
-        timeout=30
+        timeout=30,
     )
     if r.status_code != 200:
         return TwitchBadResponse()

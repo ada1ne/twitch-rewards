@@ -9,6 +9,7 @@ class IntEnum(
     """Implement a custom type to store enums as int"""
 
     impl = sa.Integer
+    cache_ok = True
 
     def __init__(self, enumtype, *args, **kwargs):
         super().__init__(*args, **kwargs)

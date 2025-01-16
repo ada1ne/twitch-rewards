@@ -36,3 +36,19 @@ def generate_token(twitch_token: str) -> Optional[str]:
         )
 
     return None
+
+
+def decode(token: str) -> str:
+    """
+    Decode JWT token.
+
+    Parameters:
+        token (str): Token to decode.
+
+    Returns:
+        str: name of the user in Twitch, stored in the token.
+    """
+    decoded_token = jwt.decode(
+        token, settings.JWT_ENCODING_KEY, algorithms=[settings.JWT_ENCODING_ALGORITHM]
+    )
+    return decoded_token["twitch_name"]
