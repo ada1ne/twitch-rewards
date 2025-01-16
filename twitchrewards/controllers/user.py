@@ -1,4 +1,4 @@
-"""Contains routes related to the user's chat metadata"""
+"""Contains routes related to the user"""
 
 from fastapi import APIRouter, HTTPException, status
 
