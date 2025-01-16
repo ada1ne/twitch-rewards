@@ -8,7 +8,7 @@ from twitchrewards.config import settings
 from twitchrewards.twitch import TwitchUserName, get_twitch_user_name
 
 
-def generate_token(twitch_token: str) -> Optional[str]:
+def generate_token(twitch_token: str, twitch_client_id: str) -> Optional[str]:
     """
     Return the jwt token to authenticate with the API.
     It sends a request to Twitch to check the name to be
@@ -16,11 +16,12 @@ def generate_token(twitch_token: str) -> Optional[str]:
 
     Parameters:
         twitch_token (str): Twitch access token to access its API.
+        twitch_client_id (str): Which Twitch application to make the request in behalf of.
 
     Returns:
         str: JWT token to authenticate within twitchrewards API.
     """
-    get_user_name_result = get_twitch_user_name(twitch_token)
+    get_user_name_result = get_twitch_user_name(twitch_token, twitch_client_id)
 
     if isinstance(get_user_name_result, TwitchUserName):
         twitch_user_name = get_user_name_result.name

@@ -1,7 +1,9 @@
 """Methods used to interact with Twitch's API"""
 
 from dataclasses import dataclass
+import requests
 
+TWITCH_GET_USER_URL = 'https://api.twitch.tv/helix/users'
 
 @dataclass
 class TwitchResponse:
@@ -20,14 +22,23 @@ class TwitchUserName(TwitchResponse):
     name: str
 
 
-def get_user_name(_: str) -> TwitchResponse:
+def get_user_name(twitch_token: str, twitch_client_id: str) -> TwitchResponse:
     """
     Return the Twitch name of the user that owns the given token
 
     Parameters:
-        _ (str): Twitch access token to access its API.
+        twitch_token (str): Twitch access token to access its API.
+        twitch_client_id (str): Which Twitch application to make the request in behalf of.
 
     Returns:
         TwitchResponse: Whether the call succeeded or not, and it's content in case of success.
     """
-    return TwitchBadResponse()
+    r = requests.get(TWITCH_GET_USER_URL, headers= {
+        "Authorization": f"Bearer {twitch_token}",
+        "Client-Id": twitch_client_id,
+    })
+    if r.status_code != 200:
+        return TwitchBadResponse()
+
+    name = r.json()['data'][0]['display_name']
+    return TwitchUserName(name)
