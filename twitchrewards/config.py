@@ -38,6 +38,9 @@ class Settings(BaseSettings):
     SSL_KEY_PATH: str
     SSL_CERTIFICATE_PATH: str
 
+    JWT_ENCODING_KEY: str
+    JWT_ENCODING_ALGORITHM: str
+
 
 class LocalSettings(Settings):
     """Settings for the local environment."""
