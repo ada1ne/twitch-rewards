@@ -2,6 +2,7 @@
 
 from typing import Annotated, Optional
 
+import jwt
 from fastapi import Header
 
 from twitchrewards.authentication.jwt import decode
@@ -19,10 +20,14 @@ def get_current_user(authorization: Annotated[str, Header()]) -> Optional[User]:
     Returns:
         Optional[User]: The user matching the access token, if any.
     """
-    split_token = authorization.split("Bearer ")
-    if len(split_token) != 2:
+    if not authorization.startswith("Bearer "):
         return None
 
+    split_token = authorization.split("Bearer ")
     token = split_token[1]
-    name = decode(token)
+    try:
+        name = decode(token)
+    except (jwt.DecodeError, jwt.ExpiredSignatureError):
+        return None
+
     return get_user_by_name(name)

@@ -1,6 +1,8 @@
 """Tests for the user controller"""
 
 import uuid
+from datetime import datetime, timedelta, timezone
+from typing import Optional
 
 import jwt
 import pytest
@@ -97,6 +99,35 @@ def test_when_updating_pronouns_and_jwt_token_is_valid_update_pronouns():
     assert user.pronouns == Pronouns.SHE
 
 
+def test_when_updating_pronouns_and_jwt_token_is_invalid_returns_unauthorized():
+    """Test if API returns 401 when token is invalid"""
+    user_name = str(uuid.uuid4())
+    given_user(user_name, Pronouns.UNKNOWN)
+    token = "foo"
+
+    response = client.post(
+        f"/users/{user_name}/set-pronouns",
+        headers={"Authorization": f"Bearer {token}"},
+        json={"pronouns": 2},
+    )
+    assert response.status_code == 401
+
+
+def test_when_updating_pronouns_and_jwt_token_is_expired_returns_unauthorized():
+    """Test if API returns 401 when token is expired"""
+    user_name = str(uuid.uuid4())
+    given_user(user_name, Pronouns.UNKNOWN)
+    token_expire_date = datetime.now(timezone.utc) - timedelta(1)
+    token = given_valid_token(user_name, expires_at=token_expire_date)
+
+    response = client.post(
+        f"/users/{user_name}/set-pronouns",
+        headers={"Authorization": f"Bearer {token}"},
+        json={"pronouns": 2},
+    )
+    assert response.status_code == 401
+
+
 def given_user(
     name: str, pronouns: Pronouns = Pronouns.THEY, title: Title = Title.NONE
 ):
@@ -107,12 +138,16 @@ def given_user(
         db.commit()
 
 
-def given_valid_token(twitch_name: str):
+def given_valid_token(twitch_name: str, expires_at: Optional[datetime] = None):
     """Encodes a valid JWT token to authenticate in the application."""
+    token_data = {
+        "twitch_name": twitch_name,
+    }
+    if expires_at:
+        token_data["exp"] = expires_at
+
     return jwt.encode(
-        {
-            "twitch_name": twitch_name,
-        },
+        token_data,
         settings.JWT_ENCODING_KEY,
         algorithm=settings.JWT_ENCODING_ALGORITHM,
     )

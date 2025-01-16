@@ -1,6 +1,6 @@
 """Contains routes related to the user"""
 
-from typing import Annotated
+from typing import Annotated, Optional
 
 from fastapi import APIRouter, HTTPException, status
 from fastapi.params import Depends
@@ -31,9 +31,12 @@ def fetch_user_metadata(user_name: str):
 def update_pronouns(
     user_name: str,
     pronouns: UpdatePronounsData,
-    user: Annotated[User, Depends(get_current_user)],
+    user: Annotated[Optional[User], Depends(get_current_user)],
 ):
     """Updates the pronouns of a user to display in chat"""
+    if not user:
+        raise HTTPException(status_code=401, detail="Invalid token")
+
     if user_name != user.name:
         raise HTTPException(
             status_code=403, detail="Access token does not match target user"
