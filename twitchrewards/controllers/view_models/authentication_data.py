@@ -8,4 +8,3 @@ class AuthenticationData:
     """Wraps the data required for authenticating a user"""
 
     twitch_token: str
-    twitch_client_id: str

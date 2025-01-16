@@ -40,6 +40,9 @@ class Settings(BaseSettings):
 
     JWT_ENCODING_KEY: str
     JWT_ENCODING_ALGORITHM: str
+    JWT_EXPIRATION_TIME_IN_SECONDS: int
+
+    TWITCH_APP_CLIENT_ID: str
 
 
 class LocalSettings(Settings):

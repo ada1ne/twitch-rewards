@@ -1,6 +1,7 @@
 """Tests for the authentication controller"""
 
 from dataclasses import dataclass
+from datetime import datetime, timezone
 
 import jwt
 from _pytest.monkeypatch import MonkeyPatch
@@ -51,6 +52,10 @@ def test_token_returns_jwt_for_user(monkeypatch: MonkeyPatch):
     )
     assert "twitch_name" in decoded_token
     assert decoded_token["twitch_name"] == twitch_name
+    assert "exp" in decoded_token
+    assert datetime.fromtimestamp(decoded_token["exp"], timezone.utc) > datetime.now(
+        timezone.utc
+    )
 
 
 def test_token_returns_unauthorized_if_authentication_failed(monkeypatch: MonkeyPatch):
