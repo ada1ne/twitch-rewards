@@ -6,6 +6,19 @@ function updateSelectedOption(pronouns_id) {
     selector.checked = true;
 }
 
+function handlePronounsChange(e) {
+    const data = { pronouns: e.target.value };
+    fetch("/users/set-pronouns", { method: "POST", body: JSON.stringify(data), headers: { "Content-Type": "application/json" } })
+        .then((response) => {
+            if (!response.ok) {
+                alert('Algo deu errado. Avisa no Discord!');
+            }
+            else {
+                alert('Foi! Se você mudou durante a live, pede pra Ada atualizar o chat :)');
+            }
+        });
+}
+
 fetch("/users")
     .then((response) => {
         if (!response.ok) {
@@ -15,3 +28,5 @@ fetch("/users")
             response.json().then((r) => updateSelectedOption(r.pronouns_id));
         }
     });
+
+document.getElementById('pronouns-selector').addEventListener("change", handlePronounsChange);

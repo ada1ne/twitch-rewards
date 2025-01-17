@@ -36,20 +36,14 @@ def fetch_current_user(user: Annotated[Optional[User], Depends(get_current_user)
     return parse(user)
 
 
-@router.post("/{user_name}/set-pronouns", status_code=status.HTTP_200_OK)
+@router.post("/set-pronouns", status_code=status.HTTP_200_OK)
 def update_pronouns(
-    user_name: str,
     pronouns: UpdatePronounsData,
     user: Annotated[Optional[User], Depends(get_current_user)],
 ):
-    """Updates the pronouns of a user to display in chat"""
+    """Updates the pronouns of the current user"""
     if not user:
         raise HTTPException(status_code=401, detail="Invalid token")
-
-    if user_name != user.name:
-        raise HTTPException(
-            status_code=403, detail="Access token does not match target user"
-        )
 
     user.pronouns = pronouns.pronouns
     update_user(user)

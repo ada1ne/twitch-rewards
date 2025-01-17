@@ -147,23 +147,6 @@ def test_when_updating_pronouns_and_jwt_token_is_expired_returns_unauthorized():
     assert response.status_code == 401
 
 
-def test_when_updating_a_different_user_returns_forbidden():
-    """Test if API returns 403 when user tries to update a user other than the JWT owner"""
-    user_name_to_update = str(uuid.uuid4())
-    user_name_in_token = str(uuid.uuid4())
-    given_user(user_name_to_update, Pronouns.UNKNOWN)
-    given_user(user_name_in_token, Pronouns.UNKNOWN)
-
-    token = given_valid_token(user_name_in_token)
-
-    response = client.post(
-        f"/users/{user_name_to_update}/set-pronouns",
-        headers={"Authorization": f"Bearer {token}"},
-        json={"pronouns": 2},
-    )
-    assert response.status_code == 403
-
-
 def test_when_fetching_current_user_returns_user():
     """
     Test if API returns the current user in the current user route
