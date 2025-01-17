@@ -27,6 +27,15 @@ def fetch_user_metadata(user_name: str):
     return parse(user)
 
 
+@router.get("", status_code=status.HTTP_200_OK)
+def fetch_current_user(user: Annotated[Optional[User], Depends(get_current_user)]):
+    """Fetches the current user base on the current JWT"""
+    if not user:
+        raise HTTPException(status_code=404, detail="No user authenticated")
+
+    return parse(user)
+
+
 @router.post("/{user_name}/set-pronouns", status_code=status.HTTP_200_OK)
 def update_pronouns(
     user_name: str,
@@ -80,4 +89,6 @@ def parse(user: User) -> UserViewModel:
     """
     pronouns = parse_pronouns(user.pronouns)
     display_name = get_name_with_title(user.title, user.name, user.pronouns)
-    return UserViewModel(display_name=display_name, pronouns=pronouns)
+    return UserViewModel(
+        display_name=display_name, pronouns=pronouns, pronouns_id=user.pronouns
+    )

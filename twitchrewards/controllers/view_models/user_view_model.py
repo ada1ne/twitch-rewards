@@ -5,7 +5,8 @@ from dataclasses import dataclass
 
 @dataclass
 class UserViewModel:
-    """Just like the User modal but with enums already parsed to string"""
+    """This should be moved to return a plain user, and pronouns should be parsed on view"""
 
     display_name: str
     pronouns: str
+    pronouns_id: int

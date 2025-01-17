@@ -36,6 +36,7 @@ def test_should_return_pronouns(pronouns: Pronouns, expected_description: str):
 
     user = response.json()
     assert user["pronouns"] == expected_description
+    assert user["pronouns_id"] == pronouns
 
 
 def test_when_user_does_not_exists_should_return_404():
@@ -161,6 +162,35 @@ def test_when_updating_a_different_user_returns_forbidden():
         json={"pronouns": 2},
     )
     assert response.status_code == 403
+
+
+def test_when_fetching_current_user_returns_user():
+    """
+    Test if API returns the current user in the current user route
+    when the user is authenticated
+    """
+    user_name = str(uuid.uuid4())
+    given_user(user_name, Pronouns.UNKNOWN)
+    token = given_valid_token(user_name)
+
+    client.cookies.set("cookie_auth", f"Bearer {token}")
+    response = client.get("/users")
+
+    assert response.status_code == 200
+    json = response.json()
+    assert json["display_name"] == user_name
+
+    client.cookies.clear()
+
+
+def test_when_fetching_current_and_no_authenticated_user_returns_404():
+    """Test if API returns 404 in the current user route if no user is authenticated"""
+    user_name = str(uuid.uuid4())
+    given_user(user_name, Pronouns.UNKNOWN)
+
+    response = client.get("/users")
+
+    assert response.status_code == 404
 
 
 def given_user(

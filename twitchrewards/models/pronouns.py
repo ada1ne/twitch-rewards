@@ -1,9 +1,9 @@
 """Pronouns a user may select"""
 
-from enum import Enum
+from enum import IntEnum
 
 
-class Pronouns(Enum):
+class Pronouns(IntEnum):
     """Available pronouns. Limit to 3 for this MVP, no support for mixing"""
 
     UNKNOWN = 0
