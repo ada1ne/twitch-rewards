@@ -11,8 +11,7 @@ from fastapi.testclient import TestClient
 from twitchrewards.config import settings
 from twitchrewards.main import app
 from twitchrewards.models import Pronouns, Title, User
-from twitchrewards.repository import get_user_by_name
-from twitchrewards.repository.database import get_db
+from twitchrewards.repository import get_user_by_name, create_user
 
 client = TestClient(app)
 
@@ -168,11 +167,7 @@ def given_user(
     name: str, pronouns: Pronouns = Pronouns.THEY, title: Title = Title.NONE
 ):
     """Insert a new user in the database."""
-    with get_db() as db:
-        user = User(name=name, pronouns=pronouns, title=title)
-        db.add(user)
-        db.commit()
-
+    create_user(User(name=name, pronouns=pronouns, title=title))
 
 def given_valid_token(twitch_name: str, expires_at: Optional[datetime] = None):
     """Encodes a valid JWT token to authenticate in the application."""

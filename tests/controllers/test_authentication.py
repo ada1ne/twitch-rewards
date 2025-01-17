@@ -2,17 +2,17 @@
 
 from dataclasses import dataclass
 from datetime import datetime, timezone
-
+import uuid
 import jwt
 from _pytest.monkeypatch import MonkeyPatch
 from fastapi.testclient import TestClient
 
-import twitchrewards.authentication.jwt
-from twitchrewards.authentication import AUTH_COOKIE_KEY
+import twitchrewards.services.authentication.jwt
+from twitchrewards.services.authentication import AUTH_COOKIE_KEY
 from twitchrewards.config import settings
 from twitchrewards.main import app
 from twitchrewards.twitch import TwitchBadResponse, TwitchResponse, TwitchUserName
-
+from twitchrewards.repository import get_user_by_name
 
 @dataclass
 class MockGetTwitchUserNameSettings:
@@ -58,6 +58,18 @@ def test_token_sets_jwt_for_user(monkeypatch: MonkeyPatch):
         timezone.utc
     )
 
+def test_if_user_does_not_exist_should_create_user(monkeypatch: MonkeyPatch):
+    """Test if a new user is being created when token is valid but there is no user"""
+    twitch_name = str(uuid.uuid4())
+    given_twitch_request_is_successful(monkeypatch, twitch_name)
+
+    response = client.post("token", json={"twitch_token": "dummy_token"})
+
+    assert response.status_code == 200
+
+    user = get_user_by_name(twitch_name)
+    assert user is not None
+    assert user.name == twitch_name
 
 def test_token_returns_unauthorized_if_authentication_failed(monkeypatch: MonkeyPatch):
     """Test if the route returns 401 if the Twitch API call fails"""
@@ -66,7 +78,6 @@ def test_token_returns_unauthorized_if_authentication_failed(monkeypatch: Monkey
     response = client.post("token", json={"twitch_token": "dummy_token"})
 
     assert response.status_code == 401
-
 
 def given_twitch_request_is_successful(monkeypatch: MonkeyPatch, twitch_name: str):
     """
@@ -77,7 +88,7 @@ def given_twitch_request_is_successful(monkeypatch: MonkeyPatch, twitch_name: st
         twitch_name (str): the name of the user in Twitch.
     """
     monkeypatch.setattr(
-        twitchrewards.authentication.jwt,
+        twitchrewards.services.authentication.jwt,
         "get_twitch_user_name",
         mock_get_twitch_user_name,
     )
@@ -94,7 +105,7 @@ def given_twitch_request_failed(monkeypatch: MonkeyPatch):
         monkeypatch (MonkeyPatch): helper class to set up the mock.
     """
     monkeypatch.setattr(
-        twitchrewards.authentication.jwt,
+        twitchrewards.services.authentication.jwt,
         "get_twitch_user_name",
         mock_get_twitch_user_name,
     )

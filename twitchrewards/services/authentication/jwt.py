@@ -5,6 +5,9 @@ from typing import Optional
 
 import jwt
 
+from twitchrewards.services.user import ensure_exists
+from twitchrewards.models import User
+
 from twitchrewards.config import settings
 from twitchrewards.twitch import TwitchUserName, get_twitch_user_name
 
@@ -25,6 +28,7 @@ def generate_token(twitch_token: str) -> Optional[str]:
 
     if isinstance(get_user_name_result, TwitchUserName):
         twitch_user_name = get_user_name_result.name
+        ensure_exists(twitch_user_name)
         return jwt.encode(
             {
                 "twitch_name": twitch_user_name,

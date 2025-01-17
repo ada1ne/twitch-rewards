@@ -5,7 +5,7 @@ from typing import Annotated, Optional
 from fastapi import APIRouter, HTTPException, status
 from fastapi.params import Depends
 
-from twitchrewards.authentication import get_current_user
+from twitchrewards.services.authentication import get_current_user
 from twitchrewards.controllers.view_models import (
     UpdatePronounsData,
     UserViewModel,

@@ -3,7 +3,7 @@
 from fastapi import APIRouter, HTTPException, status
 from fastapi.responses import FileResponse, Response
 
-from twitchrewards.authentication import AUTH_COOKIE_KEY, generate_token
+from twitchrewards.services.authentication import AUTH_COOKIE_KEY, generate_token
 from twitchrewards.controllers.view_models import AuthenticationData
 router = APIRouter()
 
