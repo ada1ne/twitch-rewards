@@ -2,7 +2,7 @@
 
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
-from starlette.staticfiles import StaticFiles
+from fastapi.staticfiles import StaticFiles
 
 from twitchrewards.controllers import authentication_router, home_router, user_router
 

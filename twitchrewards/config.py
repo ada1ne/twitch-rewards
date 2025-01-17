@@ -45,6 +45,9 @@ class Settings(BaseSettings):
     TWITCH_APP_CLIENT_ID: str
     TWITCH_APP_CLIENT_SECRET: str
 
+    APP_HOST: str
+    APP_PORT: int
+
 
 class LocalSettings(Settings):
     """Settings for the local environment."""
