@@ -9,6 +9,8 @@ from twitchrewards.authentication.jwt import decode
 from twitchrewards.models import User
 from twitchrewards.repository import get_user_by_name
 
+AUTH_COOKIE_KEY = "cookie_auth"
+
 
 def get_current_user(
     authorization: Annotated[Optional[str], Header()] = None,

@@ -8,6 +8,7 @@ from _pytest.monkeypatch import MonkeyPatch
 from fastapi.testclient import TestClient
 
 import twitchrewards.authentication.jwt
+from twitchrewards.authentication import AUTH_COOKIE_KEY
 from twitchrewards.config import settings
 from twitchrewards.main import app
 from twitchrewards.twitch import TwitchBadResponse, TwitchResponse, TwitchUserName
@@ -36,7 +37,7 @@ def mock_get_twitch_user_name(_: str) -> TwitchResponse:
     return TwitchUserName(mock_data.twitch_user_name)
 
 
-def test_token_returns_jwt_for_user(monkeypatch: MonkeyPatch):
+def test_token_sets_jwt_for_user(monkeypatch: MonkeyPatch):
     """Test if the authentication generates the expected token"""
     twitch_name = "test_name"
     given_twitch_request_is_successful(monkeypatch, twitch_name)
@@ -44,9 +45,9 @@ def test_token_returns_jwt_for_user(monkeypatch: MonkeyPatch):
     response = client.post("token", json={"twitch_token": "dummy_token"})
 
     assert response.status_code == 200
-    json = response.json()
-    assert "access_token" in json
-    access_token = json["access_token"]
+
+    assert AUTH_COOKIE_KEY in client.cookies
+    access_token = client.cookies[AUTH_COOKIE_KEY]
     decoded_token = jwt.decode(
         access_token, settings.JWT_ENCODING_KEY, settings.JWT_ENCODING_ALGORITHM
     )

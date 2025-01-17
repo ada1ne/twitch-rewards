@@ -1,10 +1,8 @@
-"""Request body for the authentication endpoint"""
+"""Request body for the token creation endpoint"""
 
 from dataclasses import dataclass
 
-
 @dataclass
 class AuthenticationData:
-    """Wraps the data required for authenticating a user"""
-
+    """Wraps the data required for validating the user"""
     twitch_token: str
