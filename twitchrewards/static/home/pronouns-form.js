@@ -1,7 +1,7 @@
 function updateSelectedOption(pronouns_id) {
     let selector = document.querySelector(`#pronouns-selector [value="${pronouns_id}"]`);
     if (!selector) {
-        selector = document.querySelector('#pronouns-selector [value="2"]');
+        selector = document.querySelector('#pronouns-selector [value="0"]');
     }
     selector.checked = true;
 }
