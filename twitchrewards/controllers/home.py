@@ -5,8 +5,8 @@ from typing import Annotated, Optional
 from fastapi import APIRouter, Depends, status
 from fastapi.responses import FileResponse, RedirectResponse
 
-from twitchrewards.services.authentication import get_current_user
 from twitchrewards.models import User
+from twitchrewards.services.authentication import get_current_user
 
 router = APIRouter()
 

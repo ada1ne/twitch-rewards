@@ -5,9 +5,9 @@ from typing import Annotated, Optional
 import jwt
 from fastapi import Cookie, Header
 
-from twitchrewards.services.authentication.jwt import decode
 from twitchrewards.models import User
 from twitchrewards.repository import get_user_by_name
+from twitchrewards.services.authentication.jwt import decode
 
 AUTH_COOKIE_KEY = "cookie_auth"
 

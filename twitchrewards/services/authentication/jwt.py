@@ -5,10 +5,8 @@ from typing import Optional
 
 import jwt
 
-from twitchrewards.services.user import ensure_exists
-from twitchrewards.models import User
-
 from twitchrewards.config import settings
+from twitchrewards.services.user import ensure_exists
 from twitchrewards.twitch import TwitchUserName, get_twitch_user_name
 
 

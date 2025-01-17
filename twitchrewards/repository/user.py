@@ -21,6 +21,7 @@ def get_by_name(name: str) -> Optional[User]:
     with get_db() as db:
         return db.query(User).filter_by(name=name).first()
 
+
 def update_user(user: User):
     """
     Update a user in the DB to match the given data.
@@ -36,6 +37,7 @@ def update_user(user: User):
     with get_db() as db:
         db.execute(stmt)
         db.commit()
+
 
 def create_user(user: User):
     """
