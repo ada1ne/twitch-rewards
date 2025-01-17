@@ -3,6 +3,7 @@
 import uuid
 from dataclasses import dataclass
 from datetime import datetime, timezone
+from os import access
 
 import jwt
 from _pytest.monkeypatch import MonkeyPatch
@@ -49,7 +50,9 @@ def test_token_sets_jwt_for_user(monkeypatch: MonkeyPatch):
     assert response.status_code == 200
 
     assert AUTH_COOKIE_KEY in client.cookies
-    access_token = client.cookies[AUTH_COOKIE_KEY]
+    cookie = client.cookies[AUTH_COOKIE_KEY][1:-1]
+    assert cookie.startswith("Bearer ")
+    access_token = cookie.split('Bearer ')[1]
     decoded_token = jwt.decode(
         access_token, settings.JWT_ENCODING_KEY, settings.JWT_ENCODING_ALGORITHM
     )

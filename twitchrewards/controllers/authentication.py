@@ -22,4 +22,4 @@ def authenticate(authentication_data: AuthenticationData, response: Response):
     if not access_token:
         raise HTTPException(status_code=401, detail="Unable to validate twitch token")
 
-    response.set_cookie(key=AUTH_COOKIE_KEY, value=access_token)
+    response.set_cookie(key=AUTH_COOKIE_KEY, value=f'Bearer {access_token}')
