@@ -10,7 +10,9 @@ from twitchrewards.models import User
 from twitchrewards.repository import get_user_by_name
 
 
-def get_current_user(authorization: Annotated[str, Header()]) -> Optional[User]:
+def get_current_user(
+    authorization: Annotated[Optional[str], Header()] = None
+) -> Optional[User]:
     """
     Get the current user given the token in the Authorization header.
 
@@ -20,7 +22,7 @@ def get_current_user(authorization: Annotated[str, Header()]) -> Optional[User]:
     Returns:
         Optional[User]: The user matching the access token, if any.
     """
-    if not authorization.startswith("Bearer "):
+    if not authorization or not authorization.startswith("Bearer "):
         return None
 
     split_token = authorization.split("Bearer ")
