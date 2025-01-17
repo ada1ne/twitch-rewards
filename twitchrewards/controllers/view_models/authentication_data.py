@@ -9,4 +9,4 @@ from pydantic import BaseModel
 class AuthenticationData(BaseModel):
     """Wraps the data required for validating the user"""
 
-    twitch_token: str
+    code: str

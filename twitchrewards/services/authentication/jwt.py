@@ -7,21 +7,25 @@ import jwt
 
 from twitchrewards.config import settings
 from twitchrewards.services.user import ensure_exists
-from twitchrewards.twitch import TwitchUserName, get_twitch_user_name
+from twitchrewards.twitch import TwitchUserName, get_twitch_user_name, get_access_token, TwitchResponse
 
 
-def generate_token(twitch_token: str) -> Optional[str]:
+def generate_token(code: str) -> Optional[str]:
     """
     Return the jwt token to authenticate with the API.
     It sends a request to Twitch to check the name to be
     added to the token
 
     Parameters:
-        twitch_token (str): Twitch access token to access its API.
+        code (str): Twitch code to generate access token for the API.
 
     Returns:
         str: JWT token to authenticate within twitchrewards API.
     """
+    twitch_token = get_access_token(code)
+    if not twitch_token:
+        return None
+
     get_user_name_result = get_twitch_user_name(twitch_token)
 
     if isinstance(get_user_name_result, TwitchUserName):

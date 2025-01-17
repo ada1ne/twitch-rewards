@@ -43,6 +43,7 @@ class Settings(BaseSettings):
     JWT_EXPIRATION_TIME_IN_SECONDS: int
 
     TWITCH_APP_CLIENT_ID: str
+    TWITCH_APP_CLIENT_SECRET: str
 
 
 class LocalSettings(Settings):
