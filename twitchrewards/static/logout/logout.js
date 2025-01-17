@@ -10,6 +10,6 @@ fetch("/logout", { method: "POST" })
             alert('Algo deu errado. Avisa no Discord!');
         }
         else {
-            window.location.href = '/';
+            window.location.href = `/?nocache=${(new Date()).getTime()}`;
         }
     });
