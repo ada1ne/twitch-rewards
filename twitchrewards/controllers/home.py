@@ -1,4 +1,5 @@
 """For now this is acting as a catch all for the setting page"""
+
 from typing import Annotated, Optional
 
 from fastapi import APIRouter, Depends, status

@@ -99,6 +99,25 @@ def test_when_updating_pronouns_and_jwt_token_is_valid_update_pronouns():
     assert user.pronouns == Pronouns.SHE
 
 
+def test_when_updating_pronouns_and_jwt_token_is_set_on_cookies_update_pronouns():
+    """Test if API returns 401 when token is invalid"""
+    user_name = str(uuid.uuid4())
+    given_user(user_name, Pronouns.UNKNOWN)
+    token = given_valid_token(user_name)
+
+    client.cookies.set("cookie_auth", f"Bearer {token}")
+    response = client.post(
+        f"/users/{user_name}/set-pronouns",
+        json={"pronouns": 2},
+    )
+    assert response.status_code == 200
+
+    user = get_user_by_name(user_name)
+    assert user.pronouns == Pronouns.SHE
+
+    client.cookies.clear()
+
+
 def test_when_updating_pronouns_and_jwt_token_is_invalid_returns_unauthorized():
     """Test if API returns 401 when token is invalid"""
     user_name = str(uuid.uuid4())
