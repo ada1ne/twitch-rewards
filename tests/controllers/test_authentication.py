@@ -118,6 +118,19 @@ def test_token_when_could_not_fetch_access_token_returns_unauthorized(
     assert response.status_code == 401
 
 
+def test_logout_should_remove_cookie():
+    """Test if the route that logs out removes cookies"""
+    client.cookies.set(AUTH_COOKIE_KEY, "dummy_value")
+
+    try:
+        response = client.get("logout")
+
+        assert response.status_code == 200
+        assert AUTH_COOKIE_KEY not in response.cookies
+    finally:
+        client.cookies.clear()
+
+
 def given_twitch_request_is_successful(monkeypatch: MonkeyPatch, twitch_name: str):
     """
     Set Twitch API mock to return a successful request.

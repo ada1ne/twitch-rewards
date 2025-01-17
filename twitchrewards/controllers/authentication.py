@@ -26,3 +26,15 @@ def authenticate(authentication_data: AuthenticationData, response: Response):
         raise HTTPException(status_code=401, detail="Unable to validate twitch token")
 
     response.set_cookie(key=AUTH_COOKIE_KEY, value=f"Bearer {access_token}")
+
+
+@router.get("/logout")
+def logout():
+    """Sends user to a temporary logout page"""
+    return FileResponse("twitchrewards/views/logout.html")
+
+
+@router.post("/logout")
+def remove_auth_cookie(response: Response):
+    """Removes the auth cookie form the user's browser"""
+    response.delete_cookie(AUTH_COOKIE_KEY)
