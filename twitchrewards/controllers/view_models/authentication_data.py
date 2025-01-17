@@ -1,7 +1,9 @@
 """Request body for the token creation endpoint"""
 
 from dataclasses import dataclass
+
 from pydantic import BaseModel
+
 
 @dataclass
 class AuthenticationData(BaseModel):
