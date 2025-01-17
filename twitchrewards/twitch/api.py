@@ -52,6 +52,7 @@ def get_user_name(twitch_token: str) -> TwitchResponse:
     name = r.json()["data"][0]["display_name"]
     return TwitchUserName(name)
 
+
 def get_access_token(code: str) -> Optional[str]:
     """
     Return the access token for the Twitch API.

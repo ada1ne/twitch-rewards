@@ -89,7 +89,7 @@ def test_when_updating_pronouns_and_jwt_token_is_valid_update_pronouns():
     token = given_valid_token(user_name)
 
     response = client.post(
-        f"/users/{user_name}/set-pronouns",
+        "/users/set-pronouns",
         headers={"Authorization": f"Bearer {token}"},
         json={"pronouns": 2},
     )
@@ -107,7 +107,7 @@ def test_when_updating_pronouns_and_jwt_token_is_set_on_cookies_update_pronouns(
 
     client.cookies.set("cookie_auth", f"Bearer {token}")
     response = client.post(
-        f"/users/{user_name}/set-pronouns",
+        "/users/set-pronouns",
         json={"pronouns": 2},
     )
     assert response.status_code == 200
@@ -125,7 +125,7 @@ def test_when_updating_pronouns_and_jwt_token_is_invalid_returns_unauthorized():
     token = "foo"
 
     response = client.post(
-        f"/users/{user_name}/set-pronouns",
+        "/users/set-pronouns",
         headers={"Authorization": f"Bearer {token}"},
         json={"pronouns": 2},
     )
@@ -140,7 +140,7 @@ def test_when_updating_pronouns_and_jwt_token_is_expired_returns_unauthorized():
     token = given_valid_token(user_name, expires_at=token_expire_date)
 
     response = client.post(
-        f"/users/{user_name}/set-pronouns",
+        "/users/set-pronouns",
         headers={"Authorization": f"Bearer {token}"},
         json={"pronouns": 2},
     )

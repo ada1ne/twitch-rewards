@@ -7,7 +7,7 @@ import jwt
 
 from twitchrewards.config import settings
 from twitchrewards.services.user import ensure_exists
-from twitchrewards.twitch import TwitchUserName, get_twitch_user_name, get_access_token, TwitchResponse
+from twitchrewards.twitch import TwitchUserName, get_access_token, get_twitch_user_name
 
 
 def generate_token(code: str) -> Optional[str]:
