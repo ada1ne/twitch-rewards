@@ -70,7 +70,7 @@ def get_access_token(code: str) -> Optional[str]:
             "client_id": settings.TWITCH_APP_CLIENT_ID,
             "client_secret": settings.TWITCH_APP_CLIENT_SECRET,
             "grant_type": "authorization_code",
-            "redirect_uri": "http://localhost:8000/token",
+            "redirect_uri": f"{settings.APP_HOST}:{settings.APP_PORT}/token",
         },
         timeout=30,
     )
