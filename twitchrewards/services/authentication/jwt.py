@@ -10,7 +10,7 @@ from twitchrewards.services.user import ensure_exists
 from twitchrewards.twitch import TwitchUserName, get_access_token, get_twitch_user_name
 
 
-def generate_token(code: str) -> Optional[str]:
+def authenticate_twitch_user(code: str) -> Optional[str]:
     """
     Return the jwt token to authenticate with the API.
     It sends a request to Twitch to check the name to be
