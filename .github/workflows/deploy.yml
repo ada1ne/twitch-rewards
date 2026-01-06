@@ -24,7 +24,7 @@ jobs:
 
     - name: Deploy to server
       run: |
-        ssh -vTi ~/.ssh/id_rsa ${{ secrets.DO_SSH_USER }}@${{ vars.DO_SSH_HOST }} << 'EOF'
+        ssh HostKeyAlgorithms=ecdsa-sha2-nistp521 -vTi ~/.ssh/id_rsa ${{ secrets.DO_SSH_USER }}@${{ vars.DO_SSH_HOST }} << 'EOF'
         cd /var/www
         mkdir test
         EOF
