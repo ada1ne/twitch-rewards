@@ -19,7 +19,7 @@ services:
       - APP_HOST=${APP_HOST}
       - APP_PORT=${APP_PORT}
     env_file:
-      - .env.local
+      - .env
   db:
     container_name: db
     image: postgres:16-alpine
@@ -34,7 +34,7 @@ services:
       - POSTGRES_HOST=${POSTGRES_HOST}
       - POSTGRES_DB=${POSTGRES_DB}
     env_file:
-      - .env.local
+      - .env
 
 volumes:
   db:
