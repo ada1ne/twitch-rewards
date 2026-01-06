@@ -17,14 +17,14 @@ jobs:
       run: |
         mkdir -p ~/.ssh
         # Add the private key to the SSH agent
-        echo "${{ secrets.DO_SSH_PRIVATE_KEY }}" > ~/.ssh/id_rsa
-        chmod 600 ~/.ssh/id_rsa
+        echo "${{ secrets.DO_SSH_PRIVATE_KEY }}" > ~/.ssh/id_ed25519
+        chmod 600 ~/.ssh/id_ed25519
         # Add the Droplet's host key to known_hosts to prevent SSH prompts
         ssh-keyscan ${{ vars.DO_SSH_HOST }} >> ~/.ssh/known_hosts
 
     - name: Deploy to server
       run: |
-        ssh -vTi ~/.ssh/id_rsa ${{ secrets.DO_SSH_USER }}@${{ vars.DO_SSH_HOST }} << 'EOF'
+        ssh -vTi ~/.ssh/id_ed25519 ${{ secrets.DO_SSH_USER }}@${{ vars.DO_SSH_HOST }} << 'EOF'
         cd /var/www
         mkdir test
         EOF
