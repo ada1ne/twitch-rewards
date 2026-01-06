@@ -48,10 +48,24 @@ jobs:
         # Add the Droplet's host key to known_hosts to prevent SSH prompts
         ssh-keyscan ${{ vars.DO_SSH_HOST }} >> ~/.ssh/known_hosts
 
-#    - name: Deploy to server
-#      run: |
-#        scp -r . ${{ secrets.DO_SSH_USER }}@${{ vars.DO_SSH_HOST }}:/var/www/twitch-rewards
-#        ssh -i ~/.ssh/id_ed25519 ${{ secrets.DO_SSH_USER }}@${{ vars.DO_SSH_HOST }} << 'EOF'
-#        cd /var/www
-#        mkdir test
-#        EOF
+    - name: Deploy to server
+      env:
+        SSL_KEY_PATH: ${{ secrets.SSL_KEY_PATH }}
+        SSL_CERTIFICATE_PATH: ${{ secrets.SSL_CERTIFICATE_PATH }}
+        JWT_ENCODING_ALGORITHM: ${{ secrets.JWT_ENCODING_ALGORITHM }}
+        JWT_EXPIRATION_TIME_IN_SECONDS: ${{ secrets.JWT_EXPIRATION_TIME_IN_SECONDS }}
+        JWT_ENCODING_KEY: ${{ secrets.JWT_ENCODING_KEY }}
+        TWITCH_APP_CLIENT_ID: ${{ secrets.TWITCH_APP_CLIENT_ID }}
+        TWITCH_APP_CLIENT_SECRET: ${{ secrets.TWITCH_APP_CLIENT_SECRET }}
+        APP_HOST: ${{ secrets.APP_HOST }}
+        APP_PORT: ${{ secrets.APP_PORT }}
+        POSTGRES_USER: ${{ secrets.POSTGRES_USER }}
+        POSTGRES_PASSWORD: ${{ secrets.POSTGRES_PASSWORD }}
+        POSTGRES_PORT: ${{ secrets.POSTGRES_PORT }}
+        POSTGRES_HOST: ${{ secrets.POSTGRES_HOST }}
+        POSTGRES_DB: ${{ secrets.POSTGRES_DB }}
+      run: |
+        ssh -i ~/.ssh/id_ed25519 ${{ secrets.DO_SSH_USER }}@${{ vars.DO_SSH_HOST }} << 'EOF'
+        cd /var/www/twitch-rewards
+        docker compose up -d
+        EOF
