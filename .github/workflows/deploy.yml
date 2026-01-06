@@ -66,6 +66,7 @@ jobs:
         POSTGRES_HOST: ${{ secrets.POSTGRES_HOST }}
         POSTGRES_DB: ${{ secrets.POSTGRES_DB }}
       run: |
+        scp docker-compose.yml ${{ secrets.DO_SSH_USER }}@${{ vars.DO_SSH_HOST }}:/var/www/twitch-rewards/docker-compose.yml
         ssh -i ~/.ssh/id_ed25519 ${{ secrets.DO_SSH_USER }}@${{ vars.DO_SSH_HOST }} << 'EOF'
         cd /var/www/twitch-rewards
         docker compose up -d
