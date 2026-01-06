@@ -1,0 +1,27 @@
+name: Restart app
+
+on:
+  workflow_dispatch:
+
+jobs:
+
+  restart:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Setup SSH
+      run: |
+        mkdir -p ~/.ssh
+        # Add the private key to the SSH agent
+        echo "${{ secrets.DO_SSH_PRIVATE_KEY }}" > ~/.ssh/id_ed25519
+        chmod 600 ~/.ssh/id_ed25519
+        # Add the Droplet's host key to known_hosts to prevent SSH prompts
+        ssh-keyscan ${{ vars.DO_SSH_HOST }} >> ~/.ssh/known_hosts
+
+    - name: Restart app
+      run: |
+        ssh -i ~/.ssh/id_ed25519 ${{ secrets.DO_SSH_USER }}@${{ vars.DO_SSH_HOST }} << 'EOF'
+        cd /var/www/twitch-rewards
+        docker stop $(docker ps -q)
+        docker compose up -d
+        EOF
