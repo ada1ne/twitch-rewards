@@ -27,7 +27,7 @@ def get_config_dict(env_file: str) -> SettingsConfigDict:
 class Settings(BaseSettings):
     """Base class for environment specific settings."""
 
-    model_config = get_config_dict(".env.dev")
+    model_config = get_config_dict(".env")
 
     POSTGRES_USER: str
     POSTGRES_PASSWORD: str
@@ -51,15 +51,11 @@ class Settings(BaseSettings):
 
 class LocalSettings(Settings):
     """Settings for the local environment."""
-
-    model_config = get_config_dict(".env.local")
     ENV: str = "local"
 
 
 class ProdSettings(Settings):
     """Settings for the prod environment."""
-
-    model_config = get_config_dict(".env.prod")
     ENV: str = "prod"
 
 

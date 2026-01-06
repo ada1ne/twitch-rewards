@@ -70,4 +70,6 @@ jobs:
         ssh -i ~/.ssh/id_ed25519 ${{ secrets.DO_SSH_USER }}@${{ vars.DO_SSH_HOST }} << 'EOF'
         cd /var/www/twitch-rewards
         docker compose up -d
+        echo HEY
+        echo $APP_PORT
         EOF
