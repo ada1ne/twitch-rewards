@@ -24,7 +24,7 @@ jobs:
 
     - name: Deploy to server
       run: |
-        scp -r . ${{ secrets.DO_SSH_USER }}@${{ vars.DO_SSH_HOST }}:/var/www
+        scp -r . ${{ secrets.DO_SSH_USER }}@${{ vars.DO_SSH_HOST }}:/var/www/twitch-rewards
         ssh -i ~/.ssh/id_ed25519 ${{ secrets.DO_SSH_USER }}@${{ vars.DO_SSH_HOST }} << 'EOF'
         cd /var/www
         mkdir test
