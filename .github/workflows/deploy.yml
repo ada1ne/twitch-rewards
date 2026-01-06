@@ -50,22 +50,23 @@ jobs:
         ssh-keyscan ${{ vars.DO_SSH_HOST }} >> ~/.ssh/known_hosts
 
     - name: Deploy to server
-      env:
-        SSL_KEY_PATH: ${{ secrets.SSL_KEY_PATH }}
-        SSL_CERTIFICATE_PATH: ${{ secrets.SSL_CERTIFICATE_PATH }}
-        JWT_ENCODING_ALGORITHM: ${{ secrets.JWT_ENCODING_ALGORITHM }}
-        JWT_EXPIRATION_TIME_IN_SECONDS: ${{ secrets.JWT_EXPIRATION_TIME_IN_SECONDS }}
-        JWT_ENCODING_KEY: ${{ secrets.JWT_ENCODING_KEY }}
-        TWITCH_APP_CLIENT_ID: ${{ secrets.TWITCH_APP_CLIENT_ID }}
-        TWITCH_APP_CLIENT_SECRET: ${{ secrets.TWITCH_APP_CLIENT_SECRET }}
-        APP_HOST: ${{ secrets.APP_HOST }}
-        APP_PORT: ${{ secrets.APP_PORT }}
-        POSTGRES_USER: ${{ secrets.POSTGRES_USER }}
-        POSTGRES_PASSWORD: ${{ secrets.POSTGRES_PASSWORD }}
-        POSTGRES_PORT: ${{ secrets.POSTGRES_PORT }}
-        POSTGRES_HOST: ${{ secrets.POSTGRES_HOST }}
-        POSTGRES_DB: ${{ secrets.POSTGRES_DB }}
       run: |
+        rm .env
+        echo "SSL_KEY_PATH=${{ secrets.SSL_KEY_PATH }}" >> .env
+        echo "SSL_CERTIFICATE_PATH=${{ secrets.SSL_CERTIFICATE_PATH }}" >> .env
+        echo "JWT_ENCODING_ALGORITHM=${{ secrets.JWT_ENCODING_ALGORITHM }}" >> .env
+        echo "JWT_EXPIRATION_TIME_IN_SECONDS=${{ secrets.JWT_EXPIRATION_TIME_IN_SECONDS }}" >> .env
+        echo "JWT_ENCODING_KEY=${{ secrets.JWT_ENCODING_KEY }}" >> .env
+        echo "TWITCH_APP_CLIENT_ID=${{ secrets.TWITCH_APP_CLIENT_ID }}" >> .env
+        echo "TWITCH_APP_CLIENT_SECRET=${{ secrets.TWITCH_APP_CLIENT_SECRET }}" >> .env
+        echo "APP_HOST=${{ secrets.APP_HOST }}" >> .env
+        echo "APP_PORT=${{ secrets.APP_PORT }}" >> .env
+        echo "POSTGRES_USER=${{ secrets.POSTGRES_USER }}" >> .env
+        echo "POSTGRES_PASSWORD=${{ secrets.POSTGRES_PASSWORD }}" >> .env
+        echo "POSTGRES_PORT=${{ secrets.POSTGRES_PORT }}" >> .env
+        echo "POSTGRES_HOST=${{ secrets.POSTGRES_HOST }}" >> .env
+        echo "POSTGRES_DB=${{ secrets.POSTGRES_DB }}" >> .env
+
         scp docker-compose.yml .env ${{ secrets.DO_SSH_USER }}@${{ vars.DO_SSH_HOST }}:/var/www/twitch-rewards
         ssh -i ~/.ssh/id_ed25519 ${{ secrets.DO_SSH_USER }}@${{ vars.DO_SSH_HOST }} << 'EOF'
         cd /var/www/twitch-rewards

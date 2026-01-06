@@ -8,16 +8,6 @@ services:
       - '443:443'
     depends_on:
       - db
-    environment:
-      - SSL_KEY_PATH=${SSL_KEY_PATH}
-      - SSL_CERTIFICATE_PATH=${SSL_CERTIFICATE_PATH}
-      - JWT_ENCODING_ALGORITHM=${JWT_ENCODING_ALGORITHM}
-      - JWT_EXPIRATION_TIME_IN_SECONDS=28800
-      - JWT_ENCODING_KEY=${JWT_ENCODING_KEY}
-      - TWITCH_APP_CLIENT_ID=${TWITCH_APP_CLIENT_ID}
-      - TWITCH_APP_CLIENT_SECRET=${TWITCH_APP_CLIENT_SECRET}
-      - APP_HOST=${APP_HOST}
-      - APP_PORT=${APP_PORT}
     env_file:
       - .env
   db:
@@ -27,12 +17,6 @@ services:
       - '172.17.0.1:5432:5432'
     volumes:
       - db:/var/lib/postgresql/data
-    environment:
-      - POSTGRES_USER=${POSTGRES_USER}
-      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
-      - POSTGRES_PORT=${POSTGRES_PORT}
-      - POSTGRES_HOST=${POSTGRES_HOST}
-      - POSTGRES_DB=${POSTGRES_DB}
     env_file:
       - .env
 
