@@ -24,7 +24,7 @@ jobs:
 
     - name: Deploy to server
       run: |
-        ssh -vTi ~/.ssh/id_ed25519 ${{ secrets.DO_SSH_USER }}@${{ vars.DO_SSH_HOST }} << 'EOF'
+        ssh -o PubkeyAcceptedAlgorithms=ssh-ed25519 -vTi ~/.ssh/id_ed25519 ${{ secrets.DO_SSH_USER }}@${{ vars.DO_SSH_HOST }} << 'EOF'
         cd /var/www
         mkdir test
         EOF
