@@ -3,16 +3,14 @@
 from dataclasses import dataclass
 
 from sqlalchemy import Column, Integer, String
-from sqlalchemy.orm import DeclarativeBase
+from sqlalchemy.orm import DeclarativeBase, Mapped
 
+from twitchrewards.models.base_db_model import Base
 from twitchrewards.models.pronouns import Pronouns
 from twitchrewards.models.sqlalchemy_enum_type import IntEnum
 from twitchrewards.models.titles import Title
-
-
-@dataclass
-class Base(DeclarativeBase):
-    """Base class for classes using sqlalchemy's ORM"""
+from twitchrewards.models.trophy import Trophy
+from twitchrewards.models.user_trophy_association import _users_trophies_table
 
 
 @dataclass
@@ -28,3 +26,4 @@ class User(Base):
     name: str = Column(String, name="Name")
     pronouns: Pronouns = Column(IntEnum(Pronouns), name="Pronouns")
     title: Title = Column(IntEnum(Title), name="Title")
+    children: Mapped[List[Trophy]] = relationship(secondary=_users_trophies_table)

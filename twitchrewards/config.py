@@ -51,11 +51,13 @@ class Settings(BaseSettings):
 
 class LocalSettings(Settings):
     """Settings for the local environment."""
+
     ENV: str = "local"
 
 
 class ProdSettings(Settings):
     """Settings for the prod environment."""
+
     ENV: str = "prod"
 
 
