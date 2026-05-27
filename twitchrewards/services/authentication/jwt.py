@@ -6,8 +6,9 @@ from typing import Optional
 import jwt
 
 from twitchrewards.config import settings
+from twitchrewards.repository import update_user_profile_image_url
 from twitchrewards.services.user import ensure_exists
-from twitchrewards.twitch import TwitchUserName, get_access_token, get_twitch_user_name
+from twitchrewards.twitch import TwitchUserResponse, get_access_token, get_twitch_user
 
 
 def authenticate_twitch_user(code: str) -> Optional[str]:
@@ -26,11 +27,13 @@ def authenticate_twitch_user(code: str) -> Optional[str]:
     if not twitch_token:
         return None
 
-    get_user_name_result = get_twitch_user_name(twitch_token)
+    get_user_result = get_twitch_user(twitch_token)
 
-    if isinstance(get_user_name_result, TwitchUserName):
-        twitch_user_name = get_user_name_result.name
-        ensure_exists(twitch_user_name)
+    if isinstance(get_user_result, TwitchUserResponse):
+        twitch_user = get_user_result.user
+        twitch_user_name = twitch_user.name
+        system_user = ensure_exists(twitch_user_name)
+        update_user_profile_image_url(system_user.id, twitch_user.profile_image_url)
         return jwt.encode(
             {
                 "twitch_name": twitch_user_name,

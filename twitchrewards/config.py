@@ -75,9 +75,9 @@ def get_settings(env: str = "local") -> Settings:
         ValueError: If the environment is invalid.
     """
     if env.lower() == "local":
-        return LocalSettings()
+        return LocalSettings()  # type: ignore
     if env.lower() == "prod":
-        return ProdSettings()
+        return ProdSettings()  # type: ignore
     raise ValueError("Invalid environment. Must be 'dev' or 'test' ,'local'.")
 
 

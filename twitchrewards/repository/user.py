@@ -32,7 +32,29 @@ def update_user(user: User):
     stmt = (
         update(User)
         .where(User.id == user.id)  # type: ignore
-        .values(pronouns=user.pronouns, title=user.title)
+        .values(
+            pronouns=user.pronouns,
+            title=user.title,
+            profile_image_url=user.profile_image_url,
+        )
+    )
+    with get_db() as db:
+        db.execute(stmt)
+        db.commit()
+
+
+def update_profile_image_url(user_id: int, profile_image_url: str):
+    """
+    Update the profile image url of the given user.
+
+    Parameters:
+        user_id (int): Name of the user to update.
+        profile_image_url(str): New profile image URL.
+    """
+    stmt = (
+        update(User)
+        .where(User.id == user_id)  # type: ignore
+        .values(profile_image_url=profile_image_url)
     )
     with get_db() as db:
         db.execute(stmt)

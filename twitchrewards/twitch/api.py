@@ -6,6 +6,7 @@ from typing import Optional
 import requests
 
 from twitchrewards.config import settings
+from twitchrewards.twitch.user import User
 
 TWITCH_GET_USER_URL = "https://api.twitch.tv/helix/users"
 TWITCH_ACCESS_TOKEN_URL = "https://id.twitch.tv/oauth2/token"
@@ -22,13 +23,13 @@ class TwitchBadResponse(TwitchResponse):
 
 
 @dataclass
-class TwitchUserName(TwitchResponse):
-    """Wraps the username from a successful Twitch API response"""
+class TwitchUserResponse(TwitchResponse):
+    """Wraps the user from a successful Twitch API response"""
 
-    name: str
+    user: User
 
 
-def get_user_name(twitch_token: str) -> TwitchResponse:
+def get_user(twitch_token: str) -> TwitchResponse:
     """
     Return the Twitch name of the user that owns the given token
 
@@ -50,7 +51,8 @@ def get_user_name(twitch_token: str) -> TwitchResponse:
         return TwitchBadResponse()
 
     name = r.json()["data"][0]["display_name"]
-    return TwitchUserName(name)
+    profile_image_url = r.json()["data"][0]["profile_image_url"]
+    return TwitchUserResponse(User(name, profile_image_url))
 
 
 def get_access_token(code: str) -> Optional[str]:

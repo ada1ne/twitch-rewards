@@ -3,7 +3,7 @@
 from twitchrewards.twitch.api import (
     TwitchBadResponse,
     TwitchResponse,
-    TwitchUserName,
+    TwitchUserResponse,
     get_access_token,
 )
-from twitchrewards.twitch.api import get_user_name as get_twitch_user_name
+from twitchrewards.twitch.api import get_user as get_twitch_user

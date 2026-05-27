@@ -15,6 +15,6 @@ class Trophy(Base):
 
     __tablename__ = "Trophies"
 
-    id: int = Column(Integer, name="Id", primary_key=True)
-    name: str = Column(String, name="Name")
-    image_url: str = Column(String, name="ImageUrl")
+    id: int = Column(Integer, name="Id", primary_key=True)  # type: ignore
+    name: str = Column(String, name="Name")  # type: ignore
+    image_url: str = Column(String, name="ImageUrl")  # type: ignore

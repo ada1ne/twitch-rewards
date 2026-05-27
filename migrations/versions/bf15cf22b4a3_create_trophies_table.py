@@ -25,12 +25,10 @@ def upgrade() -> None:
         sa.Column('Name', sa.Text, nullable=False),
         sa.Column('ImageUrl', sa.Text, nullable=False),
     )
-    user_preference = Table(
+    op.create_table(
         "UsersTrophies",
-        sa.Column("UserId", Integer, ForeignKey("Users.Id"), nullable=False),
-        sa.Column("TrophyId", Integer, ForeignKey("Trophies.Id"), nullable=False),
-        Column("pref_name", String(40), nullable=False),
-        Column("pref_value", String(100)),
+        sa.Column("UserId", sa.Integer, sa.ForeignKey("Users.Id"), nullable=False),
+        sa.Column("TrophyId", sa.Integer, sa.ForeignKey("Trophies.Id"), nullable=False),
     )
     op.create_index('Idx_UsersTrophies_UserId', 'UsersTrophies', ['UserId'], unique=True)
 

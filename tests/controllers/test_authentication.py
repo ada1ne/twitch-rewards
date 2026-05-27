@@ -9,20 +9,26 @@ import jwt
 from _pytest.monkeypatch import MonkeyPatch
 from fastapi.testclient import TestClient
 
+from dataclasses import field
 import twitchrewards.services.authentication.jwt
 from twitchrewards.config import settings
 from twitchrewards.main import app
 from twitchrewards.repository import get_user_by_name
 from twitchrewards.services.authentication import AUTH_COOKIE_KEY
-from twitchrewards.twitch import TwitchBadResponse, TwitchResponse, TwitchUserName
+from twitchrewards.twitch import TwitchBadResponse, TwitchResponse, TwitchUserResponse
+from twitchrewards.twitch.user import User
+
+
+def _userFactory() -> User:
+    return  User("test", "http://foo.test")
 
 
 @dataclass
-class MockGetTwitchUserNameSettings:
+class MockGetTwitchUserResponseSettings:
     """Data used for the mocked Twitch API call"""
 
     is_twitch_response_successful: bool = True
-    twitch_user_name: str = "test"
+    twitch_user: User = field(default_factory=_userFactory)
 
 
 @dataclass
@@ -33,11 +39,11 @@ class MockGetTwitchAccessTokenSettings:
 
 
 client = TestClient(app)
-mock_get_user_data = MockGetTwitchUserNameSettings()
+mock_get_user_data = MockGetTwitchUserResponseSettings()
 mock_get_access_token_data = MockGetTwitchAccessTokenSettings()
 
 
-def mock_get_twitch_user_name(_: str) -> TwitchResponse:
+def mock_get_twitch_user(_: str) -> TwitchResponse:
     """
     Mock the Twitch API call. Use MockGetTwitchUserNameSettings
     to customize the returned values.
@@ -45,7 +51,7 @@ def mock_get_twitch_user_name(_: str) -> TwitchResponse:
     if not mock_get_user_data.is_twitch_response_successful:
         return TwitchBadResponse()
 
-    return TwitchUserName(mock_get_user_data.twitch_user_name)
+    return TwitchUserResponse(mock_get_user_data.twitch_user)
 
 
 def mock_get_twitch_access_token(_: str) -> Optional[str]:
@@ -58,8 +64,10 @@ def mock_get_twitch_access_token(_: str) -> Optional[str]:
 
 def test_token_sets_jwt_for_user(monkeypatch: MonkeyPatch):
     """Test if the authentication generates the expected token"""
-    twitch_name = "test_name"
-    given_twitch_request_is_successful(monkeypatch, twitch_name)
+    twitch_name = 'test'
+    twitch_profile_user_url = "http://bar.test"
+    twitch_user = User(twitch_name, twitch_profile_user_url)
+    given_twitch_request_is_successful(monkeypatch, twitch_user)
     given_access_token_creation_succeeds(monkeypatch)
 
     response = client.post("token", json={"code": "code"})
@@ -84,7 +92,9 @@ def test_token_sets_jwt_for_user(monkeypatch: MonkeyPatch):
 def test_if_user_does_not_exist_should_create_user(monkeypatch: MonkeyPatch):
     """Test if a new user is being created when token is valid but there is no user"""
     twitch_name = str(uuid.uuid4())
-    given_twitch_request_is_successful(monkeypatch, twitch_name)
+    twitch_profile_user_url = "http://bar.test"
+    twitch_user = User(twitch_name, twitch_profile_user_url)
+    given_twitch_request_is_successful(monkeypatch, twitch_user)
     given_access_token_creation_succeeds(monkeypatch)
 
     response = client.post("token", json={"code": "dummy_code"})
@@ -94,6 +104,7 @@ def test_if_user_does_not_exist_should_create_user(monkeypatch: MonkeyPatch):
     user = get_user_by_name(twitch_name)
     assert user is not None
     assert user.name == twitch_name
+    assert user.profile_image_url == twitch_profile_user_url
 
 
 def test_token_when_could_not_fetch_user_returns_unauthorized(monkeypatch: MonkeyPatch):
@@ -110,7 +121,9 @@ def test_token_when_could_not_fetch_access_token_returns_unauthorized(
 ):
     """Test if the route returns 401 if the Twitch API call fails"""
     twitch_name = str(uuid.uuid4())
-    given_twitch_request_is_successful(monkeypatch, twitch_name)
+    twitch_profile_user_url = "http://bar.test"
+    twitch_user = User(twitch_name, twitch_profile_user_url)
+    given_twitch_request_is_successful(monkeypatch, twitch_user)
     given_access_token_creation_fails(monkeypatch)
 
     response = client.post("token", json={"code": "dummy_code"})
@@ -131,7 +144,7 @@ def test_logout_should_remove_cookie():
         client.cookies.clear()
 
 
-def given_twitch_request_is_successful(monkeypatch: MonkeyPatch, twitch_name: str):
+def given_twitch_request_is_successful(monkeypatch: MonkeyPatch, twitch_user: User):
     """
     Set Twitch API mock to return a successful request.
 
@@ -141,12 +154,12 @@ def given_twitch_request_is_successful(monkeypatch: MonkeyPatch, twitch_name: st
     """
     monkeypatch.setattr(
         twitchrewards.services.authentication.jwt,
-        "get_twitch_user_name",
-        mock_get_twitch_user_name,
+        "get_twitch_user",
+        mock_get_twitch_user,
     )
 
     mock_get_user_data.is_twitch_response_successful = True
-    mock_get_user_data.twitch_user_name = twitch_name
+    mock_get_user_data.twitch_user = twitch_user
 
 
 def given_twitch_request_failed(monkeypatch: MonkeyPatch):
@@ -158,8 +171,8 @@ def given_twitch_request_failed(monkeypatch: MonkeyPatch):
     """
     monkeypatch.setattr(
         twitchrewards.services.authentication.jwt,
-        "get_twitch_user_name",
-        mock_get_twitch_user_name,
+        "get_twitch_user",
+        mock_get_twitch_user,
     )
 
     mock_get_user_data.is_twitch_response_successful = False

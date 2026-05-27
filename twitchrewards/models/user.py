@@ -1,9 +1,9 @@
 """Contains the representation of a Twitch user"""
-
+from __future__ import annotations
+from typing import List
 from dataclasses import dataclass
-
 from sqlalchemy import Column, Integer, String
-from sqlalchemy.orm import DeclarativeBase, Mapped
+from sqlalchemy.orm import DeclarativeBase, Mapped, relationship
 
 from twitchrewards.models.base_db_model import Base
 from twitchrewards.models.pronouns import Pronouns
@@ -22,8 +22,9 @@ class User(Base):
 
     __tablename__ = "Users"
 
-    id: int = Column(Integer, name="Id", primary_key=True)
-    name: str = Column(String, name="Name")
-    pronouns: Pronouns = Column(IntEnum(Pronouns), name="Pronouns")
-    title: Title = Column(IntEnum(Title), name="Title")
-    children: Mapped[List[Trophy]] = relationship(secondary=_users_trophies_table)
+    id: int = Column(Integer, name="Id", primary_key=True)  # type: ignore
+    name: str = Column(String, name="Name")  # type: ignore
+    profile_image_url: str = Column(String, name="ProfileImageUrl")  # type: ignore
+    pronouns: Pronouns = Column(IntEnum(Pronouns), name="Pronouns")  # type: ignore
+    title: Title = Column(IntEnum(Title), name="Title")  # type: ignore
+    trophies: Mapped[List[Trophy]] = relationship(secondary=_users_trophies_table)  # type: ignore
