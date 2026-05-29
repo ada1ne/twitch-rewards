@@ -1,7 +1,10 @@
 """Contains the representation of a Twitch user"""
+
 from __future__ import annotations
-from typing import List
+
 from dataclasses import dataclass
+from typing import List
+
 from sqlalchemy import Column, Integer, String
 from sqlalchemy.orm import DeclarativeBase, Mapped, relationship
 

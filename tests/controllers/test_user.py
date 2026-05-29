@@ -177,11 +177,20 @@ def test_when_fetching_current_and_no_authenticated_user_returns_404():
 
 
 def given_user(
-    name: str, pronouns: Pronouns = Pronouns.THEY, title: Title = Title.NONE,
-    profile_image_url: str = "http://foo.test"
+    name: str,
+    pronouns: Pronouns = Pronouns.THEY,
+    title: Title = Title.NONE,
+    profile_image_url: str = "http://foo.test",
 ):
     """Insert a new user in the database."""
-    create_user(User(name=name, pronouns=pronouns, title=title, profile_image_url=profile_image_url))
+    create_user(
+        User(
+            name=name,
+            pronouns=pronouns,
+            title=title,
+            profile_image_url=profile_image_url,
+        )
+    )
 
 
 def given_valid_token(twitch_name: str, expires_at: Optional[datetime] = None):

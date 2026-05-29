@@ -1,7 +1,7 @@
 """Tests for the authentication controller"""
 
 import uuid
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 from datetime import datetime, timezone
 from typing import Optional
 
@@ -9,7 +9,6 @@ import jwt
 from _pytest.monkeypatch import MonkeyPatch
 from fastapi.testclient import TestClient
 
-from dataclasses import field
 import twitchrewards.services.authentication.jwt
 from twitchrewards.config import settings
 from twitchrewards.main import app
@@ -20,7 +19,7 @@ from twitchrewards.twitch.user import User
 
 
 def _userFactory() -> User:
-    return  User("test", "http://foo.test")
+    return User("test", "http://foo.test")
 
 
 @dataclass
@@ -64,7 +63,7 @@ def mock_get_twitch_access_token(_: str) -> Optional[str]:
 
 def test_token_sets_jwt_for_user(monkeypatch: MonkeyPatch):
     """Test if the authentication generates the expected token"""
-    twitch_name = 'test'
+    twitch_name = "test"
     twitch_profile_user_url = "http://bar.test"
     twitch_user = User(twitch_name, twitch_profile_user_url)
     given_twitch_request_is_successful(monkeypatch, twitch_user)
