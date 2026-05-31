@@ -16,4 +16,7 @@ def ensure_exists(user_name: str) -> User:
         create_user(User(name=user_name, pronouns=Pronouns.UNKNOWN, title=Title.NONE))
         user = get_user_by_name(user_name)
 
+    if not user:
+        raise TypeError("User does not exist even after creation")
+
     return user

@@ -8,10 +8,11 @@ import jwt
 import pytest
 from fastapi.testclient import TestClient
 
+from tests.helpers import given_user
 from twitchrewards.config import settings
 from twitchrewards.main import app
 from twitchrewards.models import Pronouns, Title, User
-from twitchrewards.repository import create_user, get_user_by_name
+from twitchrewards.repository import get_user_by_name
 
 client = TestClient(app)
 
@@ -174,23 +175,6 @@ def test_when_fetching_current_and_no_authenticated_user_returns_404():
     response = client.get("/users")
 
     assert response.status_code == 404
-
-
-def given_user(
-    name: str,
-    pronouns: Pronouns = Pronouns.THEY,
-    title: Title = Title.NONE,
-    profile_image_url: str = "http://foo.test",
-):
-    """Insert a new user in the database."""
-    create_user(
-        User(
-            name=name,
-            pronouns=pronouns,
-            title=title,
-            profile_image_url=profile_image_url,
-        )
-    )
 
 
 def given_valid_token(twitch_name: str, expires_at: Optional[datetime] = None):

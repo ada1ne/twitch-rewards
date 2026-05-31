@@ -1,22 +1,17 @@
 """Returns a user profile. Not under user.py atm as that is currently an API"""
 
-from typing import Annotated, Optional
-
-from fastapi import APIRouter, Depends, status
+from fastapi import APIRouter, status
 from fastapi.requests import Request
-from fastapi.responses import FileResponse, RedirectResponse
 from fastapi.templating import Jinja2Templates
 
-from twitchrewards.config import settings
-from twitchrewards.models import User
-from twitchrewards.services.authentication import get_current_user
+from twitchrewards.repository import get_user_by_name
 
 router = APIRouter()
 templates = Jinja2Templates(directory="twitchrewards/views")
 
 
 @router.get("/{user_name}", status_code=status.HTTP_200_OK)
-def fetch_user_profile():
+def fetch_user_profile(request: Request, user_name: str):
     """Shows the user profile"""
     user = get_user_by_name(user_name)
     if not user:

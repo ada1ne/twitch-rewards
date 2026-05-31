@@ -37,7 +37,7 @@ class MockGetTwitchAccessTokenSettings:
     should_succeed: bool = True
 
 
-client = TestClient(app)
+client = TestClient(app, follow_redirects=False)
 mock_get_user_data = MockGetTwitchUserResponseSettings()
 mock_get_access_token_data = MockGetTwitchAccessTokenSettings()
 
