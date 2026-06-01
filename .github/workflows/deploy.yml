@@ -72,7 +72,7 @@ jobs:
         cd /var/www/twitch-rewards
         docker stop app db
         docker remove app db
-        docker system prune -a
+        yes | docker system prune -a
 
         docker compose up -d
         docker exec -it app alembic upgrade head
