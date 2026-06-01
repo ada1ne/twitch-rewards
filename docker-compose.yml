@@ -4,7 +4,6 @@ services:
     container_name: app
     image: adai1ne/twitch-rewards:latest
     build: .
-    tty: true
     ports:
       - '443:443'
     depends_on:

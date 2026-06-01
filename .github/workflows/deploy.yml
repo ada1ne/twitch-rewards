@@ -75,5 +75,5 @@ jobs:
         yes | docker system prune -a
 
         docker compose up -d
-        docker exec -it app alembic upgrade head
+        docker exec app alembic upgrade head
         EOF
