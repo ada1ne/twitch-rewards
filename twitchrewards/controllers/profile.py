@@ -1,6 +1,6 @@
 """Returns a user profile. Not under user.py atm as that is currently an API"""
 
-from fastapi import APIRouter, status
+from fastapi import APIRouter, HTTPException, status
 from fastapi.requests import Request
 from fastapi.templating import Jinja2Templates
 

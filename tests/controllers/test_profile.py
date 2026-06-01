@@ -25,5 +25,5 @@ def test_when_user_does_not_exists_should_404():
     """Test if profile returns 404 is user does not exist"""
     user_name = str(uuid.uuid4())
 
-    response = client.get(f"/users/{user_name}")
+    response = client.get(f"/profiles/{user_name}")
     assert response.status_code == 404
