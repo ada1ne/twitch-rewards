@@ -15,4 +15,3 @@ clean:
 	docker stop app db
 	docker remove app db
 	docker system prune -a
-	docker volume rm $(docker volume ls -q -f dangling=true)
