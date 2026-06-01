@@ -67,10 +67,13 @@ jobs:
         echo "POSTGRES_HOST=${{ secrets.POSTGRES_HOST }}" >> .env
         echo "POSTGRES_DB=${{ secrets.POSTGRES_DB }}" >> .env
 
-        scp docker-compose.yml .env Makefile ${{ secrets.DO_SSH_USER }}@${{ vars.DO_SSH_HOST }}:/var/www/twitch-rewards
+        scp docker-compose.yml .env ${{ secrets.DO_SSH_USER }}@${{ vars.DO_SSH_HOST }}:/var/www/twitch-rewards
         ssh -i ~/.ssh/id_ed25519 ${{ secrets.DO_SSH_USER }}@${{ vars.DO_SSH_HOST }} << 'EOF'
         cd /var/www/twitch-rewards
-        make clean
-        make setupdb
-        make run
+        docker stop app db
+        docker remove app db
+        docker system prune -a
+
+        docker compose up -d
+        docker exec -it app alembic upgrade head
         EOF
