@@ -1,5 +1,5 @@
 from twitchrewards.models import Pronouns, Title, User
-from twitchrewards.repository import create_user
+from twitchrewards.repository import create_user, get_user_by_name
 
 
 def given_user(
@@ -7,8 +7,9 @@ def given_user(
     pronouns: Pronouns = Pronouns.THEY,
     title: Title = Title.NONE,
     profile_image_url: str = "http://foo.test",
-):
+) -> User:
     """Insert a new user in the database."""
+
     create_user(
         User(
             name=name,
@@ -17,3 +18,4 @@ def given_user(
             profile_image_url=profile_image_url,
         )
     )
+    return get_user_by_name(name)  # type: ignore

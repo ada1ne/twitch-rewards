@@ -6,13 +6,15 @@ from dataclasses import dataclass
 from typing import List
 
 from sqlalchemy import Column, Integer, String
+from sqlalchemy.ext.hybrid import hybrid_property
 from sqlalchemy.orm import DeclarativeBase, Mapped, relationship
 
 from twitchrewards.models.base_db_model import Base
 from twitchrewards.models.pronouns import Pronouns
 from twitchrewards.models.sqlalchemy_enum_type import IntEnum
 from twitchrewards.models.titles import Title
-from twitchrewards.models.trophy import Trophy
+from twitchrewards.models.trophies.trophy import DbTrophy, Trophy
+from twitchrewards.models.trophies.trophy_mapper import specific_trophy
 from twitchrewards.models.user_trophy_association import _users_trophies_table
 
 
@@ -30,4 +32,8 @@ class User(Base):
     profile_image_url: str = Column(String, name="ProfileImageUrl")  # type: ignore
     pronouns: Pronouns = Column(IntEnum(Pronouns), name="Pronouns")  # type: ignore
     title: Title = Column(IntEnum(Title), name="Title")  # type: ignore
-    trophies: Mapped[List[Trophy]] = relationship(secondary=_users_trophies_table)  # type: ignore
+    _trophies: Mapped[List[DbTrophy]] = relationship(secondary=_users_trophies_table)  # type: ignore
+
+    @hybrid_property
+    def trophies(self):
+        return [specific_trophy(trophy) for trophy in self._trophies]

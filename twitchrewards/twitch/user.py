@@ -9,8 +9,6 @@ from twitchrewards.models.base_db_model import Base
 from twitchrewards.models.pronouns import Pronouns
 from twitchrewards.models.sqlalchemy_enum_type import IntEnum
 from twitchrewards.models.titles import Title
-from twitchrewards.models.trophy import Trophy
-from twitchrewards.models.user_trophy_association import _users_trophies_table
 
 
 @dataclass

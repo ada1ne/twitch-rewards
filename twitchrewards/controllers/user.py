@@ -11,7 +11,7 @@ from twitchrewards.controllers.view_models import (
     get_name_with_title,
 )
 from twitchrewards.models import Pronouns, User
-from twitchrewards.repository import get_user_by_name, update_user
+from twitchrewards.repository import add_trophy, get_user_by_name, update_user
 from twitchrewards.services.authentication import get_current_user
 
 router = APIRouter()
@@ -84,5 +84,8 @@ def parse(user: User) -> UserViewModel:
     pronouns = parse_pronouns(user.pronouns)
     display_name = get_name_with_title(user.title, user.name, user.pronouns)
     return UserViewModel(
-        display_name=display_name, pronouns=pronouns, pronouns_id=user.pronouns
+        display_name=display_name,
+        pronouns=pronouns,
+        pronouns_id=user.pronouns,
+        trophies=user.trophies,
     )

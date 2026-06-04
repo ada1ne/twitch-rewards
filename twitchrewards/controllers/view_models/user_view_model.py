@@ -1,6 +1,9 @@
 """User representation returned by the API"""
 
 from dataclasses import dataclass
+from typing import List
+
+from twitchrewards.models import Trophy
 
 
 @dataclass
@@ -10,3 +13,4 @@ class UserViewModel:
     display_name: str
     pronouns: str
     pronouns_id: int
+    trophies: List[Trophy]

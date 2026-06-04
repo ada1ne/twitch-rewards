@@ -2,4 +2,6 @@
 
 from twitchrewards.models.pronouns import Pronouns
 from twitchrewards.models.titles import Title
+from twitchrewards.models.trophies.early_user import EarlyUser
+from twitchrewards.models.trophies.trophy import Trophy
 from twitchrewards.models.user import User

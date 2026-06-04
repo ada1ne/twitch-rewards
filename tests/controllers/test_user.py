@@ -11,8 +11,8 @@ from fastapi.testclient import TestClient
 from tests.helpers import given_user
 from twitchrewards.config import settings
 from twitchrewards.main import app
-from twitchrewards.models import Pronouns, Title, User
-from twitchrewards.repository import get_user_by_name
+from twitchrewards.models import EarlyUser, Pronouns, Title, User
+from twitchrewards.repository import add_trophy, get_user_by_name
 
 client = TestClient(app)
 
@@ -175,6 +175,20 @@ def test_when_fetching_current_and_no_authenticated_user_returns_404():
     response = client.get("/users")
 
     assert response.status_code == 404
+
+
+def test_when_user_has_trophies_returns_trophies():
+    user_name = str(uuid.uuid4())
+    user = given_user(user_name)
+    trophy = EarlyUser()
+    add_trophy(user, trophy)
+
+    response = client.get(f"/users/{user_name}")
+    assert response.status_code == 200
+
+    user = response.json()
+    assert len(user["trophies"]) == 1
+    assert user["trophies"][0]["id"] == trophy.id
 
 
 def given_valid_token(twitch_name: str, expires_at: Optional[datetime] = None):

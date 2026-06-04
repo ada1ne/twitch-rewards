@@ -1,0 +1,9 @@
+from twitchrewards.models.trophies.early_user import EarlyUser
+from twitchrewards.models.trophies.trophy import Trophy
+
+
+def specific_trophy(generic_trophy: Trophy) -> Trophy:
+    if generic_trophy.id == 1:
+        return EarlyUser()
+
+    raise ValueError(f"Undefined trophy {generic_trophy}")

@@ -2,9 +2,10 @@
 
 from typing import Optional
 
-from sqlalchemy import update
+from sqlalchemy import text, update
+from sqlalchemy.orm import joinedload
 
-from twitchrewards.models import User
+from twitchrewards.models import Trophy, User
 from twitchrewards.repository.database import get_db
 
 
@@ -19,7 +20,12 @@ def get_by_name(name: str) -> Optional[User]:
         User: User with the corresponding name.
     """
     with get_db() as db:
-        return db.query(User).filter_by(name=name).first()
+        return (
+            db.query(User)
+            .options(joinedload(User._trophies))
+            .filter_by(name=name)
+            .first()
+        )
 
 
 def update_user(user: User):
@@ -70,4 +76,22 @@ def create_user(user: User):
     """
     with get_db() as db:
         db.add(user)
+        db.commit()
+
+
+def add_trophy(user: User, trophy: Trophy):
+    """
+    Adds a trophy to an user.
+
+    Parameters:
+        user (User): Owner of the trophy.
+        trophy (Trophy): Trophy to be given.
+    """
+    with get_db() as db:
+        db.execute(
+            text(
+                'INSERT INTO "UsersTrophies" ("UserId", "TrophyId") VALUES (:user_id, :trophy_id)'
+            ),
+            {"user_id": user.id, "trophy_id": trophy.id},
+        )
         db.commit()
