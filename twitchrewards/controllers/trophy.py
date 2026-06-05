@@ -38,4 +38,8 @@ def redeem_trophy(
     if not trophy.redeemable:
         raise HTTPException(status_code=403, detail="Trophy is no longer redeemable")
 
+    existing_trophies_ids = [trophy.id for trophy in user.trophies]
+    if trophy.id in existing_trophies_ids:
+        return
+
     add_trophy(user, trophy)

@@ -9,6 +9,7 @@ from tests.helpers import given_user, given_valid_token
 from twitchrewards.main import app
 from twitchrewards.models import EarlyUser
 from twitchrewards.repository import (
+    add_trophy,
     get_trophy_by_id,
     get_user_by_name,
     set_trophy_redeemable,
@@ -112,5 +113,25 @@ def test_redeem_trophy_when_trophy_is_not_redeemable_returns_403():
 
     user = get_user_by_name(user_name)
     assert len(user.trophies) == 0
+
+    client.cookies.clear()
+
+
+def test_redeem_trophy_when_user_already_has_trophy_returns_200():
+    trophy = EarlyUser(True)
+    set_trophy_redeemable(trophy.id, True)
+
+    user_name = str(uuid.uuid4())
+    user = given_user(user_name)
+    token = given_valid_token(user_name)
+
+    add_trophy(user, trophy)
+
+    client.cookies.set("cookie_auth", f"Bearer {token}")
+    response = client.post("/trophies/api/1/redeem")
+    assert response.status_code == 200
+
+    user = get_user_by_name(user_name)
+    assert len(user.trophies) == 1
 
     client.cookies.clear()
