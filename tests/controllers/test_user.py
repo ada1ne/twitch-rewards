@@ -2,14 +2,11 @@
 
 import uuid
 from datetime import datetime, timedelta, timezone
-from typing import Optional
 
-import jwt
 import pytest
 from fastapi.testclient import TestClient
 
 from tests.helpers import given_user, given_valid_token
-from twitchrewards.config import settings
 from twitchrewards.main import app
 from twitchrewards.models import EarlyUser, Pronouns, Title, User
 from twitchrewards.repository import add_trophy, get_user_by_name
