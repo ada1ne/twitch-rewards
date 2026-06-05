@@ -1,12 +1,18 @@
+import uuid
 from typing import Optional
 
 import jwt
 import pytest
 from fastapi.testclient import TestClient
 
+from tests.helpers import given_user, given_valid_token
 from twitchrewards.main import app
 from twitchrewards.models import EarlyUser
-from twitchrewards.repository import get_trophy_by_id, set_trophy_redeemable
+from twitchrewards.repository import (
+    get_trophy_by_id,
+    get_user_by_name,
+    set_trophy_redeemable,
+)
 
 client = TestClient(app)
 
@@ -37,8 +43,74 @@ def test_set_redeemable_should_set_redeemable(
 
 
 def test_set_redeemable_when_trophy_does_not_exist_should_return_404():
-    response = client.post(
-        f"/trophies/api/12345/redeemable", json={"redeemable": True}
-    )
+    response = client.post(f"/trophies/api/12345/redeemable", json={"redeemable": True})
 
     assert response.status_code == 404
+
+
+def test_redeem_trophy_redeems_trophy():
+    set_trophy_redeemable(1, True)
+
+    user_name = str(uuid.uuid4())
+    given_user(user_name)
+    token = given_valid_token(user_name)
+
+    client.cookies.set("cookie_auth", f"Bearer {token}")
+    response = client.post("/trophies/api/1/redeem")
+    assert response.status_code == 200
+
+    user = get_user_by_name(user_name)
+    assert len(user.trophies) == 1
+    assert user.trophies[0].id == 1
+
+    client.cookies.clear()
+
+
+def test_redeem_trophy_when_no_logged_in_user_returns_404():
+    set_trophy_redeemable(1, True)
+
+    user_name = str(uuid.uuid4())
+    given_user(user_name)
+    token = given_valid_token(user_name)
+
+    response = client.post("/trophies/api/1/redeem")
+    assert response.status_code == 404
+
+    user = get_user_by_name(user_name)
+    assert len(user.trophies) == 0
+
+    client.cookies.clear()
+
+
+def test_redeem_trophy_when_trophy_does_not_exist_returns_404():
+    set_trophy_redeemable(1, True)
+
+    user_name = str(uuid.uuid4())
+    given_user(user_name)
+    token = given_valid_token(user_name)
+
+    client.cookies.set("cookie_auth", f"Bearer {token}")
+    response = client.post("/trophies/api/12345/redeem")
+    assert response.status_code == 404
+
+    user = get_user_by_name(user_name)
+    assert len(user.trophies) == 0
+
+    client.cookies.clear()
+
+
+def test_redeem_trophy_when_trophy_is_not_redeemable_returns_403():
+    set_trophy_redeemable(1, False)
+
+    user_name = str(uuid.uuid4())
+    given_user(user_name)
+    token = given_valid_token(user_name)
+
+    client.cookies.set("cookie_auth", f"Bearer {token}")
+    response = client.post("/trophies/api/1/redeem")
+    assert response.status_code == 403
+
+    user = get_user_by_name(user_name)
+    assert len(user.trophies) == 0
+
+    client.cookies.clear()

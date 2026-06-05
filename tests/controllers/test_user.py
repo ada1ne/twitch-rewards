@@ -8,7 +8,7 @@ import jwt
 import pytest
 from fastapi.testclient import TestClient
 
-from tests.helpers import given_user
+from tests.helpers import given_user, given_valid_token
 from twitchrewards.config import settings
 from twitchrewards.main import app
 from twitchrewards.models import EarlyUser, Pronouns, Title, User
@@ -189,18 +189,3 @@ def test_when_user_has_trophies_returns_trophies():
     user = response.json()
     assert len(user["trophies"]) == 1
     assert user["trophies"][0]["id"] == trophy.id
-
-
-def given_valid_token(twitch_name: str, expires_at: Optional[datetime] = None):
-    """Encodes a valid JWT token to authenticate in the application."""
-    token_data = {
-        "twitch_name": twitch_name,
-    }
-    if expires_at:
-        token_data["exp"] = str(expires_at)
-
-    return jwt.encode(
-        token_data,
-        settings.JWT_ENCODING_KEY,
-        algorithm=settings.JWT_ENCODING_ALGORITHM,
-    )

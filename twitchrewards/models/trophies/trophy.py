@@ -3,7 +3,7 @@
 from abc import ABC
 from dataclasses import dataclass
 
-from sqlalchemy import Column, Integer, Boolean
+from sqlalchemy import Boolean, Column, Integer
 
 from twitchrewards.models.base_db_model import Base
 

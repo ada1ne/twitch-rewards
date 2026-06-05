@@ -8,8 +8,8 @@ from twitchrewards.controllers import (
     authentication_router,
     home_router,
     profile_router,
-    user_router,
     trophy_router,
+    user_router,
 )
 
 app = FastAPI()

@@ -2,7 +2,7 @@ from typing import Optional
 
 from sqlalchemy import update
 
-from twitchrewards.models import Trophy, DbTrophy, specific_trophy
+from twitchrewards.models import DbTrophy, Trophy, specific_trophy
 from twitchrewards.repository.database import get_db
 
 
@@ -13,7 +13,7 @@ def get_by_id(trophy_id: int) -> Optional[Trophy]:
 
 
 def set_redeemable(trophy_id: int, redeemable: bool):
-    print(f'{trophy_id} - {redeemable}')
+    print(f"{trophy_id} - {redeemable}")
     stmt = (
         update(DbTrophy)
         .where(DbTrophy.id == trophy_id)  # type: ignore
