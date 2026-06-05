@@ -37,3 +37,6 @@ class User(Base):
     @hybrid_property
     def trophies(self):
         return [specific_trophy(trophy) for trophy in self._trophies]
+
+    def has_trophy(self, trophy_id: int) -> bool:
+        return trophy_id in [trophy.id for trophy in self.trophies]

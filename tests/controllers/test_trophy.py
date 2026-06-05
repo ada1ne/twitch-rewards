@@ -135,3 +135,56 @@ def test_redeem_trophy_when_user_already_has_trophy_returns_200():
     assert len(user.trophies) == 1
 
     client.cookies.clear()
+
+
+def test_get_trophy_can_redeem_trophy():
+    trophy = EarlyUser(True)
+    set_trophy_redeemable(trophy.id, True)
+
+    user_name = str(uuid.uuid4())
+    user = given_user(user_name)
+    token = given_valid_token(user_name)
+
+    client.cookies.set("cookie_auth", f"Bearer {token}")
+    response = client.get("/trophies/1")
+    assert response.status_code == 200
+
+    assert "Resgatar" in response.text
+
+    client.cookies.clear()
+
+
+def test_get_trophy_when_trophy_was_redeemed_cannot_redeem():
+    trophy = EarlyUser(True)
+    set_trophy_redeemable(trophy.id, True)
+
+    user_name = str(uuid.uuid4())
+    user = given_user(user_name)
+    token = given_valid_token(user_name)
+
+    add_trophy(user, trophy)
+
+    client.cookies.set("cookie_auth", f"Bearer {token}")
+    response = client.get("/trophies/1")
+    assert response.status_code == 200
+
+    assert "ja tem" in response.text
+
+    client.cookies.clear()
+
+
+def test_get_trophy_when_trophy_is_not_redeemable_cannot_redeem():
+    trophy = EarlyUser(True)
+    set_trophy_redeemable(trophy.id, False)
+
+    user_name = str(uuid.uuid4())
+    user = given_user(user_name)
+    token = given_valid_token(user_name)
+
+    client.cookies.set("cookie_auth", f"Bearer {token}")
+    response = client.get("/trophies/1")
+    assert response.status_code == 200
+
+    assert "nao e mais resgatavel" in response.text
+
+    client.cookies.clear()
