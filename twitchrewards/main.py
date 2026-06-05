@@ -9,6 +9,7 @@ from twitchrewards.controllers import (
     home_router,
     profile_router,
     user_router,
+    trophy_router,
 )
 
 app = FastAPI()
@@ -30,3 +31,4 @@ app.include_router(authentication_router)
 app.include_router(home_router)
 app.include_router(user_router, prefix="/users")
 app.include_router(profile_router, prefix="/profiles")
+app.include_router(trophy_router, prefix="/trophies")

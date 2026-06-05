@@ -9,3 +9,7 @@ class EarlyUser(Trophy):
     name = "Chegou cedo"
     description = "Isso nem ta funcionando direito"
     image_path = "static/img/trophies/early_user.png"
+    redeemable: bool = False
+
+    def __init__(self, redeemable):
+        self.redeemable = redeemable

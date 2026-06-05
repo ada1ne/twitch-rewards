@@ -180,7 +180,7 @@ def test_when_fetching_current_and_no_authenticated_user_returns_404():
 def test_when_user_has_trophies_returns_trophies():
     user_name = str(uuid.uuid4())
     user = given_user(user_name)
-    trophy = EarlyUser()
+    trophy = EarlyUser(False)
     add_trophy(user, trophy)
 
     response = client.get(f"/users/{user_name}")

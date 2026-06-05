@@ -4,3 +4,4 @@ from twitchrewards.controllers.authentication import router as authentication_ro
 from twitchrewards.controllers.home import router as home_router
 from twitchrewards.controllers.profile import router as profile_router
 from twitchrewards.controllers.user import router as user_router
+from twitchrewards.controllers.trophy import router as trophy_router

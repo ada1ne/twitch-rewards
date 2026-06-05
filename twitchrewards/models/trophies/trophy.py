@@ -3,7 +3,7 @@
 from abc import ABC
 from dataclasses import dataclass
 
-from sqlalchemy import Column, Integer, String
+from sqlalchemy import Column, Integer, Boolean
 
 from twitchrewards.models.base_db_model import Base
 
@@ -17,7 +17,7 @@ class DbTrophy(Base):
     __tablename__ = "Trophies"
 
     id: int = Column(Integer, name="Id", primary_key=True)  # type: ignore
-    name: str = Column(String, name="Name")  # type: ignore
+    redeemable: bool = Column(Boolean, name="Redeemable")  # type: ignore
 
 
 @dataclass(init=False)
@@ -26,3 +26,4 @@ class Trophy(ABC):
     name: str
     description: str
     image_path: str
+    redeemable: bool
