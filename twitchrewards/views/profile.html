@@ -11,6 +11,19 @@
     <div style="display: flex; justify-content: center;">
         <img src="{{ user.profile_image_url }}" />
     </div>
+    <div style="display: flex; justify-content: center;">
+        <h2>Trophies</h2>
+    </div>
+    <div style="display: flex; justify-content: center;">
+        {% for trophy in data if user.trophies %}
+            <div>
+                <img src="{{ trophy.image_path }}" />
+            </div>
+            <div>
+                {{ trophy.name }}
+            </div>
+        {% endfor %}
+    </div>
 </body>
 
 </html>
