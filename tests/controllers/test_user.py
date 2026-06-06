@@ -186,3 +186,71 @@ def test_when_user_has_trophies_returns_trophies():
     user = response.json()
     assert len(user["trophies"]) == 1
     assert user["trophies"][0]["id"] == trophy.id
+
+
+def test_set_active_trophies_sets_active_trophies():
+    user_name = str(uuid.uuid4())
+    user = given_user(user_name, Pronouns.UNKNOWN)
+    trophy = EarlyUser(False)
+    add_trophy(user, trophy)
+
+    token = given_valid_token(user_name)
+    client.cookies.set("cookie_auth", f"Bearer {token}")
+    response = client.post("/users/active-trophies", json={"trophies_ids": [1]})
+
+    assert response.status_code == 200
+
+    updated_user = get_user_by_name(user_name)
+    assert updated_user.active_trophies_ids == [1]
+
+    client.cookies.clear()
+
+
+def test_set_active_trophies_when_no_user_returns_401():
+    user_name = str(uuid.uuid4())
+    user = given_user(user_name, Pronouns.UNKNOWN)
+    trophy = EarlyUser(False)
+    add_trophy(user, trophy)
+
+    response = client.post("/users/active-trophies", json={"trophies_ids": [1]})
+
+    assert response.status_code == 401
+
+    updated_user = get_user_by_name(user_name)
+    assert updated_user.active_trophies_ids == None
+
+
+def test_set_active_trophies_when_more_than_three_trophies_returns_403():
+    user_name = str(uuid.uuid4())
+    user = given_user(user_name, Pronouns.UNKNOWN)
+    trophy = EarlyUser(False)
+    add_trophy(user, trophy)
+
+    token = given_valid_token(user_name)
+    client.cookies.set("cookie_auth", f"Bearer {token}")
+    response = client.post(
+        "/users/active-trophies", json={"trophies_ids": [1, 2, 3, 4]}
+    )
+
+    assert response.status_code == 403
+
+    updated_user = get_user_by_name(user_name)
+    assert updated_user.active_trophies_ids == None
+
+    client.cookies.clear()
+
+
+def test_set_active_trophies_when_user_does_not_have_trophy_returns_403():
+    user_name = str(uuid.uuid4())
+    given_user(user_name, Pronouns.UNKNOWN)
+    token = given_valid_token(user_name)
+
+    client.cookies.set("cookie_auth", f"Bearer {token}")
+    response = client.post("/users/active-trophies", json={"trophies_ids": [1]})
+
+    assert response.status_code == 403
+
+    updated_user = get_user_by_name(user_name)
+    assert updated_user.active_trophies_ids == None
+
+    client.cookies.clear()

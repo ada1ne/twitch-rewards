@@ -1,6 +1,6 @@
 """Used to interact with the User entity in the database"""
 
-from typing import Optional
+from typing import List, Optional
 
 from sqlalchemy import text, update
 from sqlalchemy.orm import joinedload
@@ -94,4 +94,15 @@ def add_trophy(user: User, trophy: Trophy):
             ),
             {"user_id": user.id, "trophy_id": trophy.id},
         )
+        db.commit()
+
+
+def update_active_trophies(user_id: int, active_trophies: List[int]):
+    stmt = (
+        update(User)
+        .where(User.id == user_id)  # type: ignore
+        .values(active_trophies_ids=active_trophies)
+    )
+    with get_db() as db:
+        db.execute(stmt)
         db.commit()

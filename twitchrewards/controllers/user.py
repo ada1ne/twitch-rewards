@@ -1,9 +1,10 @@
 """Contains routes related to the user"""
 
-from typing import Annotated, Optional
+from typing import Annotated, List, Optional
 
 from fastapi import APIRouter, HTTPException, status
 from fastapi.params import Depends
+from pydantic import BaseModel
 
 from twitchrewards.controllers.view_models import (
     UpdatePronounsData,
@@ -11,10 +12,20 @@ from twitchrewards.controllers.view_models import (
     get_name_with_title,
 )
 from twitchrewards.models import Pronouns, User
-from twitchrewards.repository import get_user_by_name, update_user
+from twitchrewards.repository import (
+    get_user_by_name,
+    update_active_trophies,
+    update_user,
+)
 from twitchrewards.services.authentication import get_current_user
 
 router = APIRouter()
+
+MAX_ACTIVE_TROPHIES: int = 3
+
+
+class SetActiveTrophiesBody(BaseModel):
+    trophies_ids: List[int]
 
 
 @router.get("/{user_name}", status_code=status.HTTP_200_OK)
@@ -34,6 +45,35 @@ def fetch_current_user(user: Annotated[Optional[User], Depends(get_current_user)
         raise HTTPException(status_code=404, detail="No user authenticated")
 
     return parse(user)
+
+
+@router.post("/active-trophies", status_code=status.HTTP_200_OK)
+def set_active_trophies(
+    body: SetActiveTrophiesBody,
+    user: Annotated[Optional[User], Depends(get_current_user)],
+):
+    if not user:
+        raise HTTPException(status_code=401, detail="Invalid token")
+
+    print(body.trophies_ids)
+    if len(body.trophies_ids) > MAX_ACTIVE_TROPHIES:
+        raise HTTPException(
+            status_code=403,
+            detail=f"Max active trophies ({MAX_ACTIVE_TROPHIES}) exceeded",
+        )
+
+    print(user.trophies)
+    user_trophies_ids = [ trophy.id for trophy in user.trophies ]
+    valid_trophies = [
+        trophy_id for trophy_id in body.trophies_ids if trophy_id in user_trophies_ids
+    ]
+    user_owns_all_trophies = len(valid_trophies) == len(body.trophies_ids)
+    if not user_owns_all_trophies:
+        raise HTTPException(
+            status_code=403, detail="User does not own all requested trophies"
+        )
+
+    update_active_trophies(user.id, body.trophies_ids)
 
 
 @router.post("/set-pronouns", status_code=status.HTTP_200_OK)

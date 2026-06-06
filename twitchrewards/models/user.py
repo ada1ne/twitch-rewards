@@ -5,7 +5,7 @@ from __future__ import annotations
 from dataclasses import dataclass
 from typing import List
 
-from sqlalchemy import Column, Integer, String
+from sqlalchemy import JSON, Column, Integer, String
 from sqlalchemy.ext.hybrid import hybrid_property
 from sqlalchemy.orm import DeclarativeBase, Mapped, relationship
 
@@ -33,6 +33,7 @@ class User(Base):
     pronouns: Pronouns = Column(IntEnum(Pronouns), name="Pronouns")  # type: ignore
     title: Title = Column(IntEnum(Title), name="Title")  # type: ignore
     _trophies: Mapped[List[DbTrophy]] = relationship(secondary=_users_trophies_table)  # type: ignore
+    active_trophies_ids = Column(JSON, name="ActiveTrophies")
 
     @hybrid_property
     def trophies(self):
