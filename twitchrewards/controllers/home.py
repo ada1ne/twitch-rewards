@@ -23,7 +23,7 @@ def home(request: Request, user: Annotated[Optional[User], Depends(get_current_u
 
     return templates.TemplateResponse(
         request=request,
-        name="trophy.html",
+        name="home.html",
         context={"user": user},
     )
 
