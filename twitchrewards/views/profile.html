@@ -15,7 +15,7 @@
         <h2>Trophies</h2>
     </div>
     <div style="display: flex; justify-content: center;">
-        {% for trophy in data if user.trophies %}
+        {% for trophy in user.trophies %}
             <div>
                 <img src="{{ trophy.image_path }}" />
             </div>
