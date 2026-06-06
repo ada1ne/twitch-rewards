@@ -18,7 +18,9 @@
     {% elif not trophy.redeemable %}
         <p style="display: flex; justify-content: center;">Esse trofeu ja nao e mais resgatavel :(</p>
     {% else %}
-        <button id="redeem" style="display: flex; justify-content: center;" data-trophy-id="{{ trophy.id }}">Resgatar</button>
+        <div style="display: flex; justify-content: center;">
+            <button id="redeem" style="display: flex; justify-content: center;" data-trophy-id="{{ trophy.id }}">Resgatar</button>
+        </div>
     {% endif %}
 
 </body>
