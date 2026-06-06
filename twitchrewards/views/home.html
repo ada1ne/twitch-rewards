@@ -31,6 +31,19 @@
         </fieldset>
     </form>
 
+    <form>
+        <fieldset>
+            <legend>Selecione os trofeus para aparecer no chat:</legend>
+            {% for trophy in user.trophies %}
+                <div style="display: flex;flex-direction: column;align-items: anchor-center;">
+                    <img src="{{ trophy.image_path }}" style="width: 100px;" />
+                    <label for="trophy-{{ trophy.id }}">{{ trophy.name }}</label>
+                    <input type="checkbox" name="trophy-{{ trophy.id }}" id="notifications" />
+                </div>
+            {% endfor %}
+        </fieldset>
+    </form>
+
     <a href="/logout">Deslogar</a>
 </body>
 

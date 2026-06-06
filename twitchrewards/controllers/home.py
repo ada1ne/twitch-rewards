@@ -4,7 +4,7 @@ from typing import Annotated, Optional
 
 from fastapi import APIRouter, Depends, status
 from fastapi.requests import Request
-from fastapi.responses import FileResponse, RedirectResponse
+from fastapi.responses import RedirectResponse
 from fastapi.templating import Jinja2Templates
 
 from twitchrewards.config import settings
@@ -16,12 +16,16 @@ templates = Jinja2Templates(directory="twitchrewards/views")
 
 
 @router.get("/", status_code=status.HTTP_200_OK)
-def home(user: Annotated[Optional[User], Depends(get_current_user)]):
+def home(request: Request, user: Annotated[Optional[User], Depends(get_current_user)]):
     """Allows user to change their personal data"""
     if not user:
         return RedirectResponse("/login")
 
-    return FileResponse("twitchrewards/views/home.html")
+    return templates.TemplateResponse(
+        request=request,
+        name="trophy.html",
+        context={"user": user},
+    )
 
 
 @router.get("/login", status_code=status.HTTP_200_OK)

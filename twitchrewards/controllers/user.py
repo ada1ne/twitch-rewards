@@ -61,7 +61,7 @@ def set_active_trophies(
             detail=f"Max active trophies ({MAX_ACTIVE_TROPHIES}) exceeded",
         )
 
-    user_trophies_ids = [ trophy.id for trophy in user.trophies ]
+    user_trophies_ids = [trophy.id for trophy in user.trophies]
     valid_trophies = [
         trophy_id for trophy_id in body.trophies_ids if trophy_id in user_trophies_ids
     ]
