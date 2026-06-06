@@ -55,14 +55,12 @@ def set_active_trophies(
     if not user:
         raise HTTPException(status_code=401, detail="Invalid token")
 
-    print(body.trophies_ids)
     if len(body.trophies_ids) > MAX_ACTIVE_TROPHIES:
         raise HTTPException(
             status_code=403,
             detail=f"Max active trophies ({MAX_ACTIVE_TROPHIES}) exceeded",
         )
 
-    print(user.trophies)
     user_trophies_ids = [ trophy.id for trophy in user.trophies ]
     valid_trophies = [
         trophy_id for trophy_id in body.trophies_ids if trophy_id in user_trophies_ids
