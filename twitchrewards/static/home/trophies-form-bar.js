@@ -2,6 +2,10 @@ function handleSubmitActiveTrophies(e) {
     e.preventDefault();
     const checked_trophies = [...document.querySelectorAll('.active-trophy-option:checked')];
     const checked_trophies_ids = checked_trophies.map((trophy_element) => parseInt(trophy_element.getAttribute("data-trophy-id")));
+    if (checked_trophies_ids.length > 3) {
+        alert('So pode ter 3 de uma vez. Tira uns ai');
+        return;
+    }
 
     const data = {
         'trophies_ids': checked_trophies_ids
