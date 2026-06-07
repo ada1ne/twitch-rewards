@@ -38,9 +38,10 @@
                 <div style="display: flex;flex-direction: column;align-items: anchor-center;">
                     <img src="{{ trophy.image_path }}" style="width: 100px;" />
                     <label for="trophy-{{ trophy.id }}">{{ trophy.name }}</label>
-                    <input type="checkbox" name="trophy-{{ trophy.id }}" id="notifications" />
+                    <input class="active-trophy-option" type="checkbox" name="trophy-{{ trophy.id }}" data-trophy-id="{{ trophy.id }} />
                 </div>
             {% endfor %}
+            <button id="submit-active-trophies">Salvar</button>
         </fieldset>
     </form>
 

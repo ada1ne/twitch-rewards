@@ -1,6 +1,6 @@
 function handleRedeemButton(e) {
     const button = document.getElementById("redeem");
-    const trophy_id = button.getAttribute("data-trophy-id")
+    const trophy_id = button.getAttribute("data-trophy-id");
 
     fetch(`/trophies/api/${trophy_id}/redeem`, { method: "POST" })
         .then((response) => {
