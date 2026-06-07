@@ -4,7 +4,7 @@ function handleSubmitActiveTrophies(e) {
     const checked_trophies_ids = checked_trophies.map((trophy_element) => parseInt(trophy_element.getAttribute("data-trophy-id")));
 
     const data = {
-        'trophies_ids': JSON.stringify(checked_trophies_ids)
+        'trophies_ids': checked_trophies_ids
     }
     fetch("/users/active-trophies", { method: "POST", body: JSON.stringify(data), headers: { "Content-Type": "application/json" } })
         .then((response) => {
